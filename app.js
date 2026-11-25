@@ -86,7 +86,7 @@ function copyBrief(text, items, lang, label){
  return copy(PoseWearReferences.formatBrief(text,refs,lang),label);
 }
 function counts(){
- const bars=$$('#libraryMenu [data-tab]');
+ const bars=$('.tabs [data-library-menu] [data-tab]');
  const quantities=[];
  for(const button of bars){
   const n=button.querySelector('[data-stat]'),items=DATA[button.dataset.tab];
@@ -509,7 +509,7 @@ $('#active').onclick=e=>{const b=e.target.closest('button');if(b){st.f[b.dataset
 const clearAll=()=>{st.f={};st.q='';$('#q').value='';$('#qx').hidden=true;viewT(()=>{drawFilters();apply()})};$('#reset').onclick=clearAll;$('#clearAll').onclick=clearAll;
 $('#sugg').onclick=e=>{const s=e.target.closest('[data-s]');if(s){st.f={};$('#q').value=st.q=s.dataset.s;$('#qx').hidden=false;drawFilters();apply()}};
 $('#sort').onchange=e=>{st.sort=e.target.value;viewT(apply)};
-$('#qDone').onclick=()=>$('#libraryMenu summary').focus({preventScroll:true});
+$('#qDone').onclick=()=>$('#poseMenu summary').focus({preventScroll:true});
 let qt;$('#q').oninput=e=>{$('#qx').hidden=!e.target.value;clearTimeout(qt);qt=setTimeout(()=>{st.q=e.target.value;apply()},160)};$('#qx').onclick=()=>{$('#q').value='';st.q='';$('#qx').hidden=true;apply();$('#q').focus()};
 function randPick(){if(!st.list.length)return toast('当前没有可选的内容');const i=Math.random()*st.list.length|0;lbOpen(i)}
 $('#rand').onclick=randPick;
@@ -519,8 +519,8 @@ $$('button[data-lang]').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
 // 标签页
 function selectTab(tab){
  const active=$(`.tabs [data-tab="${tab}"]`);
- const library=active.closest('#libraryMenu'),personal=active.closest('#personalMenu');
- $('#libraryLabel').textContent=library?TNAME[tab]:'素材库';
+ if(!active)return;
+ const library=active.closest('[data-library-menu]'),personal=active.closest('#personalMenu');
  $('#personalLabel').textContent=personal?TNAME[tab]:'我的';
  $('#collectionTitle').textContent=TNAME[tab];
  for(const button of $$('.tabs [data-tab]')){

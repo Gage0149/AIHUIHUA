@@ -787,6 +787,9 @@ html:lang(ja) .st-r .hl:empty::before{content:"生成した画像はこの端末
  @keyframes shellReveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 }
 .library-menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 18px;width:25rem;padding:18px}
+.library-menu.solo{display:flex;flex-direction:column;gap:8px;width:13.5rem;padding:9px}
+.library-menu.solo section+section{border-top:1px solid var(--line);padding-top:8px}
+.library-menu.solo h2{margin:0 8px 3px}
 .library-menu h2,.notice-pop h2{font:600 12px/1.4 var(--sans);color:var(--tx2);margin:0 8px 5px}
 .library-menu button,.personal-menu button{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:38px;width:100%;border-radius:9px;padding:7px 9px;text-align:left;font-size:14px;font-weight:500;color:var(--tx)}
 .tabs .shell-pop button i{display:inline-block;color:var(--mu);font-size:11px;font-style:normal;font-variant-numeric:tabular-nums;opacity:1}
@@ -825,6 +828,7 @@ html:lang(ja) .st-r .hl:empty::before{content:"生成した画像はこの端末
 .credit-list{margin-top:8px;max-width:80rem}
 .credit-list p{font-size:12px;line-height:1.65;margin:4px 0}
 @media(max-width:1020px){
+ .tabs{flex-wrap:wrap;row-gap:3px}
  .top{grid-template-columns:auto minmax(4.5rem,1fr) auto;grid-template-areas:"brand search tools" "nav nav nav";gap:6px 10px;padding-block:7px 4px}
  .top .search{max-width:none}
  .top .tools{gap:2px}
