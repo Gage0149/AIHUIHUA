@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>内容管理 · 绘影 AIHUIHUA</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="manage.css?v=1">
+</head>
+<body>
+  <header class="manage-top">
+    <a class="manage-brand" href="./#home"><span class="brand-icon">◆</span><strong>绘影</strong><span>内容管理</span></a>
+    <div class="top-actions"><span class="state-pill" id="dirtyBadge">尚未修改</span><a href="./#home" target="_blank" rel="noopener">查看网站 ↗</a></div>
+  </header>
+  <main class="manage-main">
+    <div class="intro">
+      <p class="eyebrow">AIHUIHUA · CONTENT STUDIO</p>
+      <h1>分类与图片管理</h1>
+      <p>增加菜单、维护提示词、替换图床链接。编辑过程只在当前浏览器进行，不会直接修改 GitHub；完成后下载 JSON / ZIP，再提交到仓库。</p>
+    </div>
+    <nav class="manage-tabs" aria-label="管理功能">
+      <button class="active" type="button" data-panel="categories" aria-selected="true">01 分类配置</button>
+      <button type="button" data-panel="content" aria-selected="false">02 图片与提示词</button>
+      <button type="button" data-panel="migration" aria-selected="false">03 图床迁移</button>
+      <button type="button" data-panel="export" aria-selected="false">04 导出与部署</button>
+    </nav>
+
+    <section id="panel-categories" class="workspace" aria-labelledby="categoriesHeading">
+      <div class="section-head"><div><h2 id="categoriesHeading">管理提示词菜单</h2><p>原有「姿势、服装、人物造型、环境与物件」保持不变；这里管理以后新增的独立一级菜单和二级图库。</p></div></div>
+      <div class="manage-columns">
+        <article class="panel">
+          <div class="panel-title"><h3>新增一级菜单</h3><button type="button" class="subtle" id="newGroup">+ 新建</button></div>
+          <div class="muted small">例如：摄影技巧、画风灵感。尚未分配二级图库的菜单不会显示在网站中。</div>
+          <div class="item-rows" id="groupList"></div>
+          <form id="groupForm" class="edit-form">
+            <label>菜单名称<input id="groupName" placeholder="如：摄影技巧" maxlength="30" required></label>
+            <label>英文 ID（创建后固定）<input id="groupId" placeholder="如：photography" pattern="[a-z0-9-]+" required></label>
+            <button class="primary" type="submit">保存一级菜单</button>
+          </form>
+        </article>
+        <article class="panel">
+          <div class="panel-title"><h3>二级图库</h3><button type="button" class="subtle" id="newCategory">+ 新建</button></div>
+          <div class="muted small">例如：摄影技巧 → 构图。也可以选择「环境与物件（默认）」来沿用原来的自定义图库位置。</div>
+          <div class="item-rows" id="categoryList"></div>
+          <form id="categoryForm" class="edit-form">
+            <label>图库名称<input id="categoryName" placeholder="如：摄影构图" maxlength="40" required></label>
+            <label>英文 ID（创建后固定）<input id="categoryId" placeholder="如：composition" pattern="[a-z0-9-]+" required></label>
+            <label>所属一级菜单<select id="categoryGroup"></select></label>
+            <label>JSON 文件位置<input id="categoryFile" placeholder="/gallery/composition.json" required></label>
+            <label>搜索建议（用英文逗号隔开）<input id="categorySuggestions" placeholder="三分法, 对称构图, 居中构图"></label>
+            <button class="primary" type="submit">保存二级图库</button>
+          </form>
+        </article>
+      </div>
+    </section>
+
+    <section id="panel-content" class="workspace" hidden aria-labelledby="contentHeading">
+      <div class="section-head"><div><h2 id="contentHeading">维护图片与提示词</h2><p>可编辑全部原始图库的图片直链，或在自定义图库、画廊和作品中添加新内容。更改后请点「保存当前条目」。</p></div></div>
+      <div class="content-layout">
+        <aside class="panel content-sidebar">
+          <label>选择图库<select id="sourceSelect"></select></label>
+          <div class="source-status" id="sourceStatus">请选择图库</div>
+          <label>搜索编号、标题或分类<input id="itemSearch" type="search" placeholder="输入关键词筛选"></label>
+          <div class="row-actions"><button type="button" id="newItem" class="subtle">+ 新增图片</button><button type="button" id="duplicateItem" class="subtle">复制当前</button></div>
+          <div class="item-list" id="itemList" aria-label="素材列表"></div>
+          <p class="muted small" id="listNote"></p>
+        </aside>
+        <article class="panel editor-panel">
+          <div class="panel-title"><h3 id="editTitle">选择一条内容开始编辑</h3><button type="button" id="deleteItem" class="danger" disabled>删除条目</button></div>
+          <form id="itemForm" class="edit-form" hidden>
+            <div class="form-grid">
+              <label>素材 ID<input id="itemId" required></label>
+              <label id="titleLabel">图片标题<input id="itemTitle" placeholder="图片名称"></label>
+              <label>二级分类<input id="itemCategory" placeholder="如：人物写真"></label>
+              <label class="checkbox-line"><input id="itemAdult" type="checkbox"> R18 成人向（关闭开关时隐藏）</label>
+            </div>
+            <label>中文提示词<textarea id="itemZh" rows="3"></textarea></label>
+            <label>英文提示词<textarea id="itemEn" rows="3"></textarea></label>
+            <label>图片介绍<textarea id="itemDescription" rows="2"></textarea></label>
+            <label>标签（英文逗号分隔）<input id="itemTags" placeholder="人像, 电影感, 写真"></label>
+            <div class="image-editor-heading"><h4>图片地址</h4><span class="muted small">可分别修改缩略图、预览图、原图及多角度图片</span></div>
+            <div id="imageFields" class="image-fields"></div>
+            <div class="preview"><img id="itemPreview" alt="图片预览" hidden><span id="previewHint">暂无可预览的图片</span></div>
+            <details class="raw-details"><summary>高级：直接编辑该条目的 JSON</summary><p class="muted small">点击「应用 JSON」会覆盖上方尚未保存的表单内容。适合修改原始素材的特殊字段。</p><textarea id="itemRaw" rows="12" spellcheck="false"></textarea><button type="button" class="subtle" id="applyRaw">校验并应用 JSON</button></details>
+            <div class="editor-actions"><button type="submit" class="primary">保存当前条目</button><span class="muted small">仅保存到本次编辑会话，发布需导出。</span></div>
+          </form>
+          <div id="emptyEditor" class="empty-editor">从左侧选择一张图片，即可编辑图片直链、提示词和 R18 标记。</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="panel-migration" class="workspace" hidden aria-labelledby="migrationHeading">
+      <div class="section-head"><div><h2 id="migrationHeading">批量替换图床直链</h2><p>只修改图片字段，不修改提示词、原始编号及作者来源说明。请先把图片真正上传到自己的 K-Vault / R2。</p></div></div>
+      <article class="panel migration-panel">
+        <label>操作图库<select id="migrationSource"></select></label>
+        <div class="form-grid">
+          <label>旧地址前缀<input id="oldPrefix" placeholder="https://pwimg.0vo.pro/p/t/"></label>
+          <label>新地址前缀<input id="newPrefix" placeholder="https://img.example.com/poses/thumb/"></label>
+        </div>
+        <div class="row-actions"><button type="button" id="previewPrefix" class="subtle">预览可替换数量</button><button type="button" id="applyPrefix" class="primary">应用前缀替换</button></div>
+        <div class="subsection"><h3>或使用精确 URL 映射</h3><p class="muted small">粘贴 JSON 对象，键为旧图片地址，值为对应的新图片地址；适合图片改名或目录结构不同的情况。</p><textarea id="mappingText" rows="7" spellcheck="false" placeholder='{"https://旧图床/001.webp":"https://新图床/001.webp"}'></textarea><button type="button" id="applyMapping" class="subtle">应用精确映射</button></div>
+        <div id="migrationReport" class="notice">选择图库后，可以先检查其中还包含哪些第三方图片域名。</div>
+      </article>
+    </section>
+
+    <section id="panel-export" class="workspace" hidden aria-labelledby="exportHeading">
+      <div class="section-head"><div><h2 id="exportHeading">导出与部署</h2><p>本站部署在 GitHub Pages，不需要数据库，也不需要在网页输入 GitHub Token。</p></div></div>
+      <article class="panel export-panel">
+        <h3>本次待发布的文件</h3><div id="changedFiles" class="changed-files">暂无修改</div>
+        <div class="row-actions"><button id="exportAll" type="button" class="primary">下载本次修改 ZIP</button><button id="exportCurrent" type="button" class="subtle">下载当前图库 JSON</button></div>
+        <ol class="steps">
+          <li>下载 ZIP 后先解压，保留其中的文件夹结构。</li>
+          <li>打开 <a href="https://github.com/Gage0149/AIHUIHUA" target="_blank" rel="noopener">Gage0149/AIHUIHUA</a>，按压缩包中的相对路径更新或新建文件。</li>
+          <li>提交到 <code>main</code> 分支，GitHub Pages 会使用新的 JSON 内容。新建文件也必须上传，不能只上传 <code>categories.json</code>。</li>
+          <li>刷新网站并检查图片，必要时按 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd>。</li>
+        </ol>
+        <div class="notice"><strong>安全提示：</strong>本管理页面不会调用 GitHub 写入接口，也不会收集、保存或上传 GitHub 密钥。R18 仅是页面显示过滤，并不是私密图片访问控制。</div>
+      </article>
+    </section>
+  </main>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="zip.js" defer></script>
+  <script src="manage.js?v=1" defer></script>
+</body>
+</html>

@@ -13,13 +13,37 @@ function load(t){const source=CUSTOM_FILES[t]||{pose:'poses.json',depth:'depths.
  return LOAD[t]||(LOAD[t]=fetch(source).then(r=>{if(!r.ok)throw Error(r.status);return r.json()}).then(raw=>{const rows=Array.isArray(raw)?raw:(raw.items||[]);const a=CUSTOM_FILES[t]?rows.map((it,i)=>normalizeCustom(it,i,t)):rows;if(t=='depth')DATA.depthMeta=raw.pack||null;a.forEach((it,i)=>{it.type=t;it.k=PFX[t]+it.id;it.ord=i;if(it.angles)it.ai=st.ang[it.k]||0;ITEMS[it.k]=it});DATA[t]=a;counts();return a}).catch(e=>{delete LOAD[t];throw e}))}
 function normalizeCustom(it,index,type){
  const image=it.image||it.thumbnail||'',preview=it.preview||image;
- return {...it,id:String(it.id||index+1),no:String(it.no||index+1),ti:it.title||it.ti||'未命名素材',zh:it.prompt_zh||it.zh||'',en:it.prompt_en||it.en||'',cat:it.subcategory||it.cat||'其他',t:it.thumbnail||image,m:preview,i:it.original||preview,o:it.original||preview,ext:0,type,libraryName:TNAME[type]};
+ return {...it,id:String(it.id||index+1),no:String(it.no||index+1),ti:it.title||it.ti||'未命名素材',zh:it.prompt_zh||it.zh||'',en:it.prompt_en||it.en||'',cat:it.subcategory||it.cat||'其他',t:it.thumbnail||image,m:preview,i:it.original||preview,o:it.original||preview,a:!!(it.a||it.adult===true||it.r18===true||it.nsfw===true),ext:0,type,libraryName:TNAME[type]};
+}
+function customMenuGroup(entry){
+ const details=document.createElement('details');
+ details.className='shell-menu';details.name='header-popover';details.id='customMenu-'+entry.id;
+ details.dataset.libraryMenu='';
+ const summary=document.createElement('summary');summary.className='nav-trigger';
+ const title=document.createElement('span');title.textContent=entry.name;
+ const arrow=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ arrow.setAttribute('viewBox','0 0 24 24');
+ arrow.setAttribute('fill','none');arrow.setAttribute('stroke','currentColor');
+ arrow.setAttribute('stroke-width','1.65');arrow.setAttribute('stroke-linecap','round');
+ arrow.setAttribute('stroke-linejoin','round');
+ arrow.innerHTML='<path d="m8 10 4 4 4-4"/>';
+ summary.append(title,arrow);
+ const pop=document.createElement('div');pop.className='shell-pop library-menu solo stats';
+ const section=document.createElement('section');const heading=document.createElement('h2');heading.textContent=entry.name;
+ section.append(heading);pop.append(section);details.append(summary,pop);
+ $('#personalMenu').before(details);
+ bindShellMenu(details);
+ return {details,section};
 }
 async function configureCustomGalleries(){
  try{
   const response=await fetch(siteAssetUrl('gallery/categories.json'),{cache:'no-cache'});if(!response.ok)return;
   const config=await response.json();if(!Array.isArray(config.categories))return;
-  const host=$('#customLibraryGroup');
+  const defaultHost=$('#customLibraryGroup'),groups=new Map();
+  for(const group of Array.isArray(config.groups)?config.groups:[]){
+   if(!/^[a-z0-9-]+$/.test(group.id||'')||!String(group.name||'').trim()||groups.has(group.id))continue;
+   groups.set(group.id,customMenuGroup(group));
+  }
   for(const entry of config.categories){
    if(!/^[a-z0-9-]+$/.test(entry.id||'')||!entry.file||!entry.name)continue;
    const tab='custom-'+entry.id;if(TABS.includes(tab))continue;
@@ -28,6 +52,7 @@ async function configureCustomGalleries(){
    FDEF[tab]=[['cat','分类']];SUGG[tab]=Array.isArray(entry.suggestions)?entry.suggestions:[];
    TABS.splice(TABS.indexOf('studio'),0,tab);
    if(entry.id!=='gallery'){
+    const host=groups.get(entry.group)?.section||defaultHost;
     const button=document.createElement('button');button.type='button';button.dataset.tab=tab;
     const label=document.createElement('span');label.textContent=entry.name;
     const count=document.createElement('i');count.className='nav-count';
@@ -35,7 +60,8 @@ async function configureCustomGalleries(){
     count.append(number);button.append(label,count);host.append(button);
    }
   }
-  host.hidden=!host.querySelector('button');
+  defaultHost.hidden=!defaultHost.querySelector('button');
+  for(const {details,section} of groups.values())details.hidden=!section.querySelector('button');
  }catch(error){console.warn('自定义图库配置加载失败',error)}
 }
 function counterpartType(item){
@@ -528,7 +554,7 @@ function selectTab(tab){
 document.addEventListener('pointerdown',event=>{
  for(const menu of $$('.shell-menu[open]'))if(!menu.contains(event.target))menu.open=false;
 });
-for(const menu of $$('.shell-menu')){
+function bindShellMenu(menu){
  menu.addEventListener('focusout',event=>{
   if(event.relatedTarget&&!menu.contains(event.relatedTarget))menu.open=false;
  });
@@ -551,6 +577,7 @@ for(const menu of $$('.shell-menu')){
   event.preventDefault();event.stopPropagation();menu.open=true;items[next].focus();
  });
 }
+for(const menu of $$('.shell-menu'))bindShellMenu(menu);
 // Keep the gallery position while the user works in the studio or checks a result.
 let galleryReturn=null,tabRequest=0;
 const isWorkspace=tab=>tab==='studio'||tab==='history';
