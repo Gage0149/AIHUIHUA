@@ -1,11 +1,11 @@
-const VERSION = 'gallery-navigation-groups-2026-11-25';
-const PRECACHE = ['./','index.html','theme.js','style.css','app.js','image-providers.js','studio.js','extras.js','zip.js','history.js','i18n.js','references.js','favicon.svg'];
+const VERSION = 'aihuihua-home-masonry-2026-11-25';
+const PRECACHE = ['./','index.html','theme.js','style.css','app.js','image-providers.js','studio.js','extras.js','zip.js','history.js','i18n.js','references.js','site-shell.js','gallery/gallery.json','gallery/works.json','gallery/categories.json','favicon.svg'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(VERSION).then(cache => cache.addAll(PRECACHE)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', event => {
   event.waitUntil(caches.keys().then(keys => Promise.all(
-    keys.filter(key => (key.startsWith('posewear-') || key.startsWith('gallery-')) && key !== VERSION).map(key => caches.delete(key))
+    keys.filter(key => (key.startsWith('posewear-') || key.startsWith('gallery-') || key.startsWith('aihuihua-')) && key !== VERSION).map(key => caches.delete(key))
   )));
 });
 self.addEventListener('fetch', event => {

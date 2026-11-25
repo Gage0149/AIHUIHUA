@@ -88,7 +88,7 @@ function copyBrief(text, items, lang, label){
  return copy(PoseWearReferences.formatBrief(text,refs,lang),label);
 }
 function counts(){
- const bars=$('.tabs [data-library-menu] [data-tab]');
+ const bars=$$('.tabs [data-library-menu] [data-tab]');
  const quantities=[];
  for(const button of bars){
   const n=button.querySelector('[data-stat]'),items=DATA[button.dataset.tab];
@@ -572,6 +572,7 @@ function navigate(tab){
  }
  const openingStudio=tab==='studio'&&st.tab!=='studio';
  const ready=setTab(tab);
+ window.SITE_SHELL?.sync();
  if(openingStudio)$('#stT').focus({preventScroll:true});
  return ready;
 }
@@ -789,7 +790,7 @@ $('#ageN').onclick=$('#ageBox').onclick=e=>{if(e.target.id!='ageN'&&e.target.id!
 document.addEventListener('click',e=>{const b=e.target.closest('[data-age]');if(!b)return;st.adult?(ageSet(false),toast('已隐藏成人内容')):ageAsk()});
 $('#privO').onclick=e=>{e.preventDefault();openDialog($('#privBox'))};$('#privBox').onclick=e=>{if(e.target.id=='privBox'||e.target.closest('[data-close]'))closeDialog($('#privBox'))};
 addEventListener('hashchange',()=>{const id=location.hash.split('/')[1];if(!$('#lb').hidden){if(id)return;lbPushed=false;lbClose();setTimeout(route,closing?280:0);return}route()});
-if(innerWidth<=760)$('#q').placeholder='搜索';setLang(st.lang,true);ageSet(st.adult);hdr();st.tab='';configureCustomGalleries().then(()=>{needKeys([...st.sel]).then(()=>tray()).catch(()=>{});if(Q0&&!location.hash)history.replaceState(null,'','?q='+encodeURIComponent(Q0)+'#'+(TABS.includes(QT)?QT:'costume'));route()});
+if(innerWidth<=760)$('#q').placeholder='搜索';setLang(st.lang,true);ageSet(st.adult);hdr();st.tab='';configureCustomGalleries().then(()=>{needKeys([...st.sel]).then(()=>tray()).catch(()=>{});if(Q0&&!location.hash)history.replaceState(null,'','?q='+encodeURIComponent(Q0)+'#'+(TABS.includes(QT)?QT:'costume'));route();window.SITE_SHELL?.sync()});
 if('serviceWorker'in navigator&&location.protocol!='file:')addEventListener('load',()=>navigator.serviceWorker.register(siteAssetUrl('sw.js')).catch(()=>{}));
 
 window.APP={ok,counterpartType,poseCounterpart,cardFace,studioSlot,suggestions:SUGG,sendToStudio,ageAsk,toggleFav,toggleSel,lbOpen,lbClose,previewItem,apply,li:()=>li,load,ITEMS,DATA,thumb,big,ath,title,prompt,toast,esc,setTab:navigate,st,copy,copyBrief,needKeys};
