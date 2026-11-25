@@ -155,6 +155,39 @@
       }
     }
   }
+  const promptPanels = [
+    {wrap:$('#collectionDialogPromptWrap'), box:$('#collectionDialogPromptBox'), text:$('#collectionDialogPrompt'), toggle:$('#collectionDialogPromptToggle')},
+    {wrap:$('#collectionDialogEnWrap'), box:$('#collectionDialogEnBox'), text:$('#collectionDialogPromptEn'), toggle:$('#collectionDialogEnToggle')}
+  ];
+  function resetPromptPanel(panel, content) {
+    panel.wrap.hidden = !content;
+    panel.text.textContent = content || '';
+    panel.box.classList.remove('expanded', 'is-overflowing');
+    panel.box.scrollTop = 0;
+    panel.toggle.hidden = true;
+    panel.toggle.textContent = '展开全文';
+    panel.toggle.setAttribute('aria-expanded', 'false');
+  }
+  function updatePromptOverflow() {
+    for (const panel of promptPanels) {
+      if (panel.wrap.hidden || panel.box.classList.contains('expanded')) continue;
+      const overflowing = panel.box.scrollHeight > panel.box.clientHeight + 2;
+      panel.toggle.hidden = !overflowing;
+      panel.box.classList.toggle('is-overflowing', overflowing);
+    }
+  }
+  for (const panel of promptPanels) {
+    panel.toggle.onclick = () => {
+      const expanded = panel.box.classList.toggle('expanded');
+      panel.box.classList.toggle('is-overflowing', !expanded);
+      if (!expanded) panel.box.scrollTop = 0;
+      panel.toggle.textContent = expanded ? '收起内容' : '展开全文';
+      panel.toggle.setAttribute('aria-expanded', String(expanded));
+    };
+  }
+  window.addEventListener('resize', () => {
+    if ($('#collectionDialog').open) requestAnimationFrame(updatePromptOverflow);
+  });
   function openCard(item) {
     if (isAdultItem(item) && !document.body.classList.contains('adult')) return;
     selectedItem = item;
@@ -168,12 +201,12 @@
     $('#collectionDialogCategory').textContent = item.subcategory || item.category || '视觉灵感';
     $('#collectionDialogTitle').textContent = item.title || '未命名作品';
     $('#collectionDialogDescription').textContent = item.description || '';
-    $('#collectionDialogPrompt').textContent = item.prompt_zh || '';
-    $('#collectionDialogPromptEn').textContent = item.prompt_en || '';
-    $('#collectionDialogPromptWrap').hidden = !item.prompt_zh;
-    $('#collectionDialogEnWrap').hidden = !item.prompt_en;
+    resetPromptPanel(promptPanels[0], item.prompt_zh);
+    resetPromptPanel(promptPanels[1], item.prompt_en);
     $('#collectionDialogTags').replaceChildren();
-    (Array.isArray(item.tags) ? item.tags : []).forEach(tag =>
+    const tags = Array.isArray(item.tags) ? item.tags : [];
+    $('#collectionDialogTagsWrap').hidden = !tags.length;
+    tags.forEach(tag =>
       $('#collectionDialogTags').append(element('span', '', tag))
     );
     const link = $('#collectionDialogSource');
@@ -191,6 +224,8 @@
       }
     };
     if (!dialog.open) dialog.showModal();
+    $('.collection-dialog-copy').scrollTop = 0;
+    requestAnimationFrame(updatePromptOverflow);
   }
   $('#collectionDialogImage').onerror = () => {
     $('#collectionDialogImage').hidden = true;
