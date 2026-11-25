@@ -1,42 +1,13 @@
 [
   {
-    "id": "gallery-001",
-    "title": "日系人物写真",
-    "subcategory": "人物写真",
-    "image": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1100&auto=format&fit=crop&q=85",
-    "prompt_zh": "成年女性，日系室内写真，自然光，真实摄影",
-    "prompt_en": "Adult woman, Japanese indoor portrait, natural light, realistic photography",
-    "tags": [
-      "日系",
-      "人物",
-      "写真"
-    ],
-    "demo": true
-  },
-  {
-    "id": "gallery-002",
-    "title": "森林风景",
-    "subcategory": "风景摄影",
-    "image": "https://images.unsplash.com/photo-1448375240586-882707db888b?w=1100&auto=format&fit=crop&q=85",
-    "prompt_zh": "清晨森林，阳光穿过树木，薄雾，电影感",
-    "prompt_en": "Morning forest, sunlight through trees, soft mist, cinematic",
-    "tags": [
-      "森林",
-      "风景"
-    ],
-    "demo": true
-  },
-  {
-    "id": "gallery-003",
-    "title": "梦幻星空与幻想意境",
-    "subcategory": "幻想场景",
-    "image": "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1100&auto=format&fit=crop&q=85",
-    "prompt_zh": "夜空星河，神秘梦幻的群山轮廓，电影感构图，丰富的蓝紫色调，柔和星光，精美概念艺术",
-    "prompt_en": "Milky Way above mysterious mountains, cinematic composition, rich blue-violet palette, soft starlight, detailed fantasy concept art",
-    "tags": [
-      "幻想",
-      "插画"
-    ],
-    "demo": true
-  }
+  "id": "new-1795604264185",
+  "title": "新图片",
+  "subcategory": "未分类",
+  "image": "",
+  "prompt_zh": "",
+  "prompt_en": "",
+  "adult": false,
+  "tags": [  "人像", "艺术"
 ]
+}
+  ]
