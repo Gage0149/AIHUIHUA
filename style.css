@@ -1442,3 +1442,9 @@ body[data-view="works"] #pageWorks{display:block}
   .masonry-column{gap:9px}
   .masonry-column .masonry-caption{padding:10px 9px 12px}
 }
+
+
+/* 图片按自然宽高比展示，横图下方不补空白背景 */
+.masonry-column .masonry-visual{min-height:0}
+.masonry-column .masonry-visual.image-failed{min-height:180px}
+.masonry-column .masonry-image-error{min-height:180px}
