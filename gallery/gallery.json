@@ -13,4 +13,18 @@
       "艺术"
     ]
   }
+    {
+    "id": "new-00001",
+    "title": "性感女神",
+    "subcategory": "性感",
+    "image": "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU12YXdiSHdEYUYwYjFYUFNMdnkxU2pRX2s0UHdzQUFuOEhBQUljd0RoRVp0R0g2dUhMVHBZOUJBIiwiZSI6InBuZyIsIm4iOiJwYXN0ZV8xNzk1NjA2NDU0MDk5XzEucG5nIiwibSI6ImltYWdlL3BuZyIsInMiOjI2NTI3NDcsInQiOjE3OTU2MDY0NjQ2NzQsIm1pZCI6NDd9.cJdR4wBadvLZYmWqiNZGfZ4vSTwnw07_DYDSdHrEs44.png",
+    "prompt_zh": "一个漂亮的东亚少女，胸部倚在桌上，上半身，正面，坐在桌子面前，双手放在桌子上，身穿红色丝绒短款连衣裙，腿上是长筒袜，穿高跟鞋，手套作点缀。，半身照，iPhone18pro 拍摄的照片，胶片质感，写实照片",
+    "prompt_en": "",
+    "adult": true,
+    "tags": [
+      "人像",
+      "写真",
+      "性感"
+    ]
+  }
 ]
