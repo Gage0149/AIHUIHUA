@@ -1,4 +1,6 @@
 'use strict';
+const SITE_BASE=new URL('.',document.currentScript?.src||location.href);
+const siteAssetUrl=path=>new URL(String(path).replace(/^\/+/,''),SITE_BASE).href;
 const _u=new URLSearchParams(location.search);let Q0=(_u.get('q')||'').slice(0,60),QT=_u.get('t')||'';
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s),LS=k=>{try{return JSON.parse(localStorage[k]||'null')}catch(e){return null}},SV=(k,v)=>{try{localStorage[k]=JSON.stringify(v)}catch(e){}};
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -15,13 +17,13 @@ function normalizeCustom(it,index,type){
 }
 async function configureCustomGalleries(){
  try{
-  const response=await fetch('/gallery/categories.json',{cache:'no-cache'});if(!response.ok)return;
+  const response=await fetch(siteAssetUrl('gallery/categories.json'),{cache:'no-cache'});if(!response.ok)return;
   const config=await response.json();if(!Array.isArray(config.categories))return;
   const host=$('#customLibraryGroup');
   for(const entry of config.categories){
    if(!/^[a-z0-9-]+$/.test(entry.id||'')||!entry.file||!entry.name)continue;
    const tab='custom-'+entry.id;if(TABS.includes(tab))continue;
-   CUSTOM_FILES[tab]=new URL(entry.file,location.href).href;
+   CUSTOM_FILES[tab]=siteAssetUrl(entry.file);
    TNAME[tab]=String(entry.name);PFX[tab]='x:'+entry.id+':';
    FDEF[tab]=[['cat','分类']];SUGG[tab]=Array.isArray(entry.suggestions)?entry.suggestions:[];
    TABS.splice(TABS.indexOf('studio'),0,tab);
@@ -788,6 +790,6 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-age]');if(
 $('#privO').onclick=e=>{e.preventDefault();openDialog($('#privBox'))};$('#privBox').onclick=e=>{if(e.target.id=='privBox'||e.target.closest('[data-close]'))closeDialog($('#privBox'))};
 addEventListener('hashchange',()=>{const id=location.hash.split('/')[1];if(!$('#lb').hidden){if(id)return;lbPushed=false;lbClose();setTimeout(route,closing?280:0);return}route()});
 if(innerWidth<=760)$('#q').placeholder='搜索';setLang(st.lang,true);ageSet(st.adult);hdr();st.tab='';configureCustomGalleries().then(()=>{needKeys([...st.sel]).then(()=>tray()).catch(()=>{});if(Q0&&!location.hash)history.replaceState(null,'','?q='+encodeURIComponent(Q0)+'#'+(TABS.includes(QT)?QT:'costume'));route()});
-if('serviceWorker'in navigator&&location.protocol!='file:')addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+if('serviceWorker'in navigator&&location.protocol!='file:')addEventListener('load',()=>navigator.serviceWorker.register(siteAssetUrl('sw.js')).catch(()=>{}));
 
 window.APP={ok,counterpartType,poseCounterpart,cardFace,studioSlot,suggestions:SUGG,sendToStudio,ageAsk,toggleFav,toggleSel,lbOpen,lbClose,previewItem,apply,li:()=>li,load,ITEMS,DATA,thumb,big,ath,title,prompt,toast,esc,setTab:navigate,st,copy,copyBrief,needKeys};
