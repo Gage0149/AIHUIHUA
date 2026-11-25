@@ -472,11 +472,8 @@ grid.onclick=e=>{if(e.target.closest('a.miss'))return;const a=e.target.closest('
  ({open:()=>lbOpen(st.list.indexOf(origin),c),flip:()=>flipCard(c,a,it),fav:()=>toggleFav(k),unrec:()=>unRec(origin.k),sel:()=>toggleSel(k),copy:()=>copyBrief(prompt(it,st.lang),[it],st.lang,'提示词'),try:()=>trayOpen?toggleSel(it.k):useReference(it),ang:()=>setAng(it,+a.dataset.i)})[a.dataset.a]()};
 function viewT(fn){
  if(motionPreference.matches){fn();return Promise.resolve()}
- if(document.startViewTransition){
-  const transition=document.startViewTransition(fn);
-  transition.ready.catch(()=>{}); // Transitions may be skipped while navigating quickly.
-  return transition.updateCallbackDone;
- }
+ // 全屏 View Transition 截图覆盖层会吞掉用户紧接着点选的顶栏链接。
+ // 仅让内容网格淡入，保证顶栏在分类切换过程中仍然可操作。
  fn();
  grid.classList.add('fade');
  requestAnimationFrame(()=>requestAnimationFrame(()=>grid.classList.remove('fade')));
