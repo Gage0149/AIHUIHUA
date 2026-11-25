@@ -570,6 +570,9 @@ function navigate(tab){
  return ready;
 }
 async function setTab(t,openId,workbenchId){
+ // 避免异步旧分类在用户刚切至画廊/作品时重新夺回页面路由。
+ const section=location.hash.slice(1).split('/')[0];
+ if(!section||section==='home'||section==='gallery'||section==='works'||section==='custom-gallery')return;
  const request=++tabRequest,changed=st.tab!==t;
  clearTimeout(qt);
  if(changed&&st.tab&&!isWorkspace(st.tab)&&isWorkspace(t)){
