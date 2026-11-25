@@ -1,5 +1,12 @@
 {
   "groups": [],
+  "collectionFilters": {
+    "gallery": [
+      {"name": "艺术", "adult": false},
+      {"name": "性感", "adult": true}
+    ],
+    "works": []
+  },
   "categories": [
     {
       "id": "inspiration",

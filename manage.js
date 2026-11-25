@@ -14,9 +14,10 @@
   const configPath = 'gallery/categories.json';
   const imageKeys = new Set(['image','thumbnail','preview','original','t','m','i','o']);
   const states = new Map();
-  let config = {groups:[],categories:[]};
+  let config = {groups:[],categories:[],collectionFilters:{gallery:[],works:[]}};
   let configDirty = false;
   let selectedGroup = -1, selectedCategory = -1;
+  let selectedCollectionFilter = '';
   let sourcePath = 'gallery/gallery.json', selectedIndex = -1, draft = null, draftNew = false, formDirty = false;
   let toastTimer;
 
@@ -147,6 +148,62 @@
         ()=>{selectedCategory=reorder(config.categories,i,1)??i;renderCategories();},
         ()=>removeCategory(i)));
     });
+  }
+  const collectionPaths = {gallery:'gallery/gallery.json',works:'gallery/works.json'};
+  function filterRows(view) {
+    return Array.isArray(config.collectionFilters?.[view]) ? config.collectionFilters[view] : [];
+  }
+  function selectCollectionFilter(name='') {
+    selectedCollectionFilter = name;
+    const row=filterRows($('#collectionFilterView').value).find(item=>item.name===name);
+    safeSelect('#collectionFilterName',name);
+    $('#collectionFilterName').disabled=!!name;
+    $('#collectionFilterAdult').checked=row?.adult===true;
+    $('#resetCollectionFilter').disabled=!row;
+    renderCollectionFilterList();
+  }
+  async function renderCollectionFilterList() {
+    const view=$('#collectionFilterView').value,list=$('#collectionFilterList');
+    const records=new Map();
+    for(const row of filterRows(view))if(row?.name?.trim())records.set(row.name.trim(),row.adult===true);
+    try{
+      const source=await loadSource(collectionPaths[view]);
+      if(view!==$('#collectionFilterView').value)return;
+      for(const item of source.items){
+        const name=String(item.subcategory||item.category||'其他').trim();
+        if(name&&!records.has(name))records.set(name,false);
+      }
+    }catch(error){toast('分类读取失败：'+error.message);}
+    if(view!==$('#collectionFilterView').value)return;
+    list.replaceChildren();
+    if(!records.size){list.textContent='暂无分类。可以新建分类规则，或先添加一张图片。';return;}
+    for(const [name,adult] of records){
+      const button=document.createElement('button');button.type='button';
+      button.className='collection-filter-choice'+(name===selectedCollectionFilter?' selected':'');
+      const label=document.createElement('strong');label.textContent=name;
+      const status=document.createElement('small');status.textContent=adult?'仅 R18 开启后显示':'普通分类 · 始终显示';
+      status.className=adult?'adult-label':'public-label';
+      button.append(label,status);button.onclick=()=>selectCollectionFilter(name);list.append(button);
+    }
+  }
+  function saveCollectionFilter(event) {
+    event.preventDefault();
+    const view=$('#collectionFilterView').value,name=$('#collectionFilterName').value.trim();
+    if(!name)return toast('请填写二级分类名称');
+    const rows=filterRows(view),adult=$('#collectionFilterAdult').checked;
+    const existing=rows.find(row=>row.name===name);
+    if(existing)existing.adult=adult;
+    else rows.push({name,adult});
+    config.collectionFilters[view]=rows;
+    markDirty(configPath);selectCollectionFilter(name);
+    toast('分类可见性规则已保存；请导出 categories.json 并提交 GitHub');
+  }
+  function resetCollectionFilter() {
+    const view=$('#collectionFilterView').value,name=selectedCollectionFilter;
+    if(!name)return;
+    config.collectionFilters[view]=filterRows(view).filter(row=>row.name!==name);
+    markDirty(configPath);selectCollectionFilter('');
+    toast('已恢复默认规则；该分类如果有图片，将始终显示');
   }
   function selectCategory(index) {
     selectedCategory=index;const c=config.categories[index]||{};
@@ -424,6 +481,14 @@
   }
   function validateExport() {
     const ids=new Set(),groupIds=new Set();
+    for(const view of ['gallery','works']){
+      const names=new Set();
+      for(const row of filterRows(view)){
+        const name=typeof row.name==='string'?row.name.trim():'';
+        if(!name||names.has(name)||typeof row.adult!=='boolean')throw Error(view+' 的二级分类可见性规则无效或重复');
+        names.add(name);
+      }
+    }
     for(const group of config.groups){if(!validId(group.id)||!String(group.name).trim()||groupIds.has(group.id))throw Error('一级菜单 ID 重复或无效');groupIds.add(group.id);}
     for(const c of config.categories){
       if(!validId(c.id)||ids.has(c.id)||!String(c.name).trim()||!validPath(c.file))throw Error('二级图库配置有重复 ID 或无效文件路径');
@@ -463,6 +528,10 @@
     });
     $('#newGroup').onclick=()=>selectGroup(-1);$('#groupForm').onsubmit=saveGroup;
     $('#newCategory').onclick=()=>selectCategory(-1);$('#categoryForm').onsubmit=saveCategory;
+    $('#collectionFilterView').onchange=()=>selectCollectionFilter('');
+    $('#newCollectionFilter').onclick=()=>selectCollectionFilter('');
+    $('#collectionFilterForm').onsubmit=saveCollectionFilter;
+    $('#resetCollectionFilter').onclick=resetCollectionFilter;
     $('#sourceSelect').onchange=event=>changeSource(event.target.value);
     $('#itemSearch').oninput=renderItems;
     $('#newItem').onclick=()=>newItem(false);$('#duplicateItem').onclick=()=>newItem(true);
@@ -479,9 +548,10 @@
     try{
       const response=await fetch('./'+configPath,{cache:'no-cache'});if(!response.ok)throw Error('HTTP '+response.status);
       const result=await response.json();if(!Array.isArray(result.categories))throw Error('缺少 categories 数组');
-      config={...result,groups:Array.isArray(result.groups)?result.groups:[],categories:result.categories};
+      config={...result,groups:Array.isArray(result.groups)?result.groups:[],categories:result.categories,
+        collectionFilters:{...(result.collectionFilters||{}),gallery:Array.isArray(result.collectionFilters?.gallery)?result.collectionFilters.gallery:[],works:Array.isArray(result.collectionFilters?.works)?result.collectionFilters.works:[]}};
       refreshGroupChoices();renderGroups();renderCategories();selectGroup(-1);selectCategory(-1);
-      refreshSourceOptions();await changeSource(sourcePath);updateDirty();
+      refreshSourceOptions();await changeSource(sourcePath);await renderCollectionFilterList();updateDirty();
     }catch(error){toast('读取分类配置失败：'+error.message);setText('#sourceStatus',error.message);}
   }
   document.addEventListener('DOMContentLoaded',initialize);

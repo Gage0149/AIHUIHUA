@@ -8,6 +8,20 @@
     gallery: {path:'gallery/gallery.json', items:null, pending:null, error:null, filter:'全部', visible:[]},
     works: {path:'gallery/works.json', items:null, pending:null, error:null, filter:'全部', visible:[]}
   };
+  // 二级分类的 R18 与图片本身的 R18 完全独立。未单独配置的分类默认公开。
+  const collectionFilters = {gallery:[],works:[]};
+  let collectionFiltersPending;
+  function loadCollectionFilters() {
+    if (!collectionFiltersPending) collectionFiltersPending = fetch(siteFile('gallery/categories.json'), {cache:'no-cache'})
+      .then(response => {if (!response.ok) throw Error('HTTP '+response.status);return response.json();})
+      .then(config => {
+        for (const view of ['gallery','works']) {
+          const rows = config.collectionFilters?.[view];
+          collectionFilters[view] = Array.isArray(rows) ? rows.filter(row => row && typeof row.name === 'string' && row.name.trim()) : [];
+        }
+      }).catch(error => console.warn('画廊/作品分类显示配置读取失败，使用默认公开规则', error));
+    return collectionFiltersPending;
+  }
   // 画廊、作品共用顶部 R18 状态；未标记的素材默认公开。
   const isAdultItem = item => !!item && (item.adult === true || item.r18 === true || item.nsfw === true);
   let selectedItem = null;
@@ -39,7 +53,8 @@
   }
   async function load(view) {
     const state = datasets[view];
-    if (state.items !== null) { render(view); return; }
+    const filtersReady = loadCollectionFilters();
+    if (state.items !== null) { await filtersReady; render(view); return; }
     if (!state.pending) {
       state.pending = fetch(siteFile(state.path), {cache:'no-cache'})
         .then(response => {
@@ -56,7 +71,7 @@
           console.warn(state.path, error);
         });
     }
-    await state.pending;
+    await Promise.all([state.pending, filtersReady]);
     if (document.body.dataset.view === view) render(view);
   }
   function element(tag, className, content) {
@@ -74,10 +89,20 @@
     const adultAllowed = document.body.classList.contains('adult');
     const available = adultAllowed ? items : items.filter(item => !isAdultItem(item));
     const adultHidden = items.length - available.length;
-    const categories = [...new Set(available.map(item => item.subcategory || item.category || '其他'))];
+    const categoryRules = new Map();
+    for (const rule of collectionFilters[view]) {
+      const name = rule.name.trim();
+      if (!categoryRules.has(name)) categoryRules.set(name, rule.adult === true);
+    }
+    // 从全部图片（包括当前被 R18 隐藏的图片）补全分类，不再从 available 推断分类是否可见。
+    for (const item of items) {
+      const name = item.subcategory || item.category || '其他';
+      if (!categoryRules.has(name)) categoryRules.set(name, false);
+    }
+    const categories = [...categoryRules].filter(([,adult]) => adultAllowed || !adult).map(([name]) => name);
     if (state.filter !== '全部' && !categories.includes(state.filter)) state.filter = '全部';
     filters.replaceChildren();
-    if (categories.length > 1) {
+    if (categories.length) {
       ['全部', ...categories].forEach(category => {
         const chip = element('button', category === state.filter ? 'active' : '', category);
         chip.type = 'button';

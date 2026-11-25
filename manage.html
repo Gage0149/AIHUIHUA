@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>内容管理 · 绘影 AIHUIHUA</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="manage.css?v=1">
+  <link rel="stylesheet" href="manage.css?v=2">
 </head>
 <body>
   <header class="manage-top">
@@ -52,6 +52,25 @@
             <button class="primary" type="submit">保存二级图库</button>
           </form>
         </article>
+      </div>
+      <div class="collection-visibility-section">
+        <div class="section-head"><h2>画廊 / 作品 · 二级分类可见性</h2><p>分类标题和图片的 R18 独立设置。普通分类始终展示筛选按钮，即使其中的图片暂时都被隐藏；仅明确标记为成人向的分类按钮会在 R18 关闭时隐藏。</p></div>
+        <div class="manage-columns">
+          <article class="panel">
+            <label class="collection-view-label">选择页面<select id="collectionFilterView"><option value="gallery">画廊</option><option value="works">作品</option></select></label>
+            <div class="muted small">列表同时包含已配置的分类和从图片 subcategory 自动发现的分类。点击分类可修改它自己的显示规则。</div>
+            <div id="collectionFilterList" class="item-rows" aria-label="画廊和作品分类">正在读取分类…</div>
+          </article>
+          <article class="panel">
+            <div class="panel-title"><h3>分类显示规则</h3><button type="button" id="newCollectionFilter" class="subtle">+ 新建</button></div>
+            <form id="collectionFilterForm" class="edit-form">
+              <label>分类名称（与图片的 subcategory 一致）<input id="collectionFilterName" placeholder="如：艺术、性感、人物写真" maxlength="40" required></label>
+              <label class="checkbox-line"><input type="checkbox" id="collectionFilterAdult">仅在开启 R18 时显示这个分类按钮</label>
+              <div class="row-actions"><button type="submit" class="primary">保存分类规则</button><button type="button" id="resetCollectionFilter" class="subtle" disabled>取消特殊规则</button></div>
+              <p class="muted small">这里仅控制<strong>筛选分类按钮</strong>；单张图片是否显示仍由「图片与提示词」中的 R18 复选框独立控制。修改分类名称不会自动修改图片记录。</p>
+            </form>
+          </article>
+        </div>
       </div>
     </section>
 
@@ -121,6 +140,6 @@
   </main>
   <div id="toast" role="status" aria-live="polite"></div>
   <script src="zip.js" defer></script>
-  <script src="manage.js?v=1" defer></script>
+  <script src="manage.js?v=2" defer></script>
 </body>
 </html>
