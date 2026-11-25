@@ -1,0 +1,25 @@
+{
+  "categories": [
+    {
+      "id": "inspiration",
+      "name": "场景灵感·示例",
+      "file": "/gallery/inspiration.json",
+      "count": 3,
+      "suggestions": ["客厅", "夜晚", "中式"]
+    },
+    {
+      "id": "furniture",
+      "name": "家具参考·示例",
+      "file": "/gallery/furniture.json",
+      "count": 2,
+      "suggestions": ["椅子", "木质", "沙发"]
+    }
+{
+  "id": "gallery",
+  "name": "画廊",
+  "file": "/gallery/gallery.json",
+  "count": 3,
+  "suggestions": ["人物写真", "风景摄影", "AI插画"]
+}
+  ]
+}

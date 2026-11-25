@@ -1,0 +1,24 @@
+[
+  {
+    "id": "furniture-001",
+    "title": "实木餐椅·橡木",
+    "subcategory": "椅子",
+    "image": "https://pwimg.0vo.pro/f/t/F001_front.webp",
+    "preview": "https://posewear.pages.dev/f/i/F001_front.webp",
+    "original": "https://pwimg.0vo.pro/o/f/F001_front.webp",
+    "prompt_zh": "一把浅色橡木实木餐椅，直腿、曲线靠背，精细的木纹和自然表面处理，正面产品参考摄影。",
+    "prompt_en": "A light oak solid wood dining chair with straight legs, curved backrest, detailed wood grain, natural finish, front-view product reference.",
+    "tags": ["家具", "橡木", "椅子"]
+  },
+  {
+    "id": "furniture-002",
+    "title": "黑色办公转椅",
+    "subcategory": "椅子",
+    "image": "https://pwimg.0vo.pro/f/t/F002_front.webp",
+    "preview": "https://posewear.pages.dev/f/i/F002_front.webp",
+    "original": "https://pwimg.0vo.pro/o/f/F002_front.webp",
+    "prompt_zh": "现代黑色办公转椅，简洁的办公家具造型，正面产品展示，清晰的结构与材质细节。",
+    "prompt_en": "Modern black swivel office chair, clean functional office furniture design, front-view product photograph with clear material details.",
+    "tags": ["家具", "办公", "椅子"]
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "scene-001",
+    "title": "现代客厅·白天",
+    "subcategory": "室内场景",
+    "image": "https://pwimg.0vo.pro/s/t/E001_above.webp",
+    "preview": "https://posewear.pages.dev/s/i/E001_above.webp",
+    "original": "https://pwimg.0vo.pro/o/s/E001_above.webp",
+    "prompt_zh": "现代简约客厅，白墙、浅橡木地板、灰色布艺沙发，左侧落地窗洒入自然日光，空间干净舒适，俯拍视角。",
+    "prompt_en": "Modern minimal living room, white walls, light oak floor, grey fabric sofa, daylight through a floor-to-ceiling window on the left, high-angle view.",
+    "tags": ["客厅", "室内", "白天"]
+  },
+  {
+    "id": "scene-002",
+    "title": "现代客厅·夜晚",
+    "subcategory": "室内场景",
+    "image": "https://pwimg.0vo.pro/s/t/E002_above.webp",
+    "preview": "https://posewear.pages.dev/s/i/E002_above.webp",
+    "original": "https://pwimg.0vo.pro/o/s/E002_above.webp",
+    "prompt_zh": "现代客厅夜景，温暖的环境照明，柔和阴影，安静舒适的居家氛围，室内空间摄影。",
+    "prompt_en": "Modern living room at night, warm ambient lighting, soft shadows, quiet and cozy home atmosphere, interior photography.",
+    "tags": ["客厅", "夜晚", "光影"]
+  },
+  {
+    "id": "scene-003",
+    "title": "新中式客厅·白天",
+    "subcategory": "中式场景",
+    "image": "https://pwimg.0vo.pro/s/t/E003_above.webp",
+    "preview": "https://posewear.pages.dev/s/i/E003_above.webp",
+    "original": "https://pwimg.0vo.pro/o/s/E003_above.webp",
+    "prompt_zh": "新中式客厅，现代设计与东方细节相结合，自然光照入室内，宁静简约的家居摄影。",
+    "prompt_en": "Contemporary Chinese-style living room, restrained Eastern design details, natural daylight, calm minimal interior photography.",
+    "tags": ["中式", "客厅", "白天"]
+  }
+]

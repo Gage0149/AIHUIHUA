@@ -1,0 +1,29 @@
+[
+  {
+    "id": "gallery-001",
+    "title": "日系人物写真",
+    "subcategory": "人物写真",
+    "image": "https://你的图床域名/photo001.webp",
+    "prompt_zh": "成年女性，日系室内写真，自然光，真实摄影",
+    "prompt_en": "Adult woman, Japanese indoor portrait, natural light, realistic photography",
+    "tags": ["日系", "人物", "写真"]
+  },
+  {
+    "id": "gallery-002",
+    "title": "森林风景",
+    "subcategory": "风景摄影",
+    "image": "https://你的图床域名/photo002.webp",
+    "prompt_zh": "清晨森林，阳光穿过树木，薄雾，电影感",
+    "prompt_en": "Morning forest, sunlight through trees, soft mist, cinematic",
+    "tags": ["森林", "风景"]
+  },
+  {
+    "id": "gallery-003",
+    "title": "幻想插画",
+    "subcategory": "AI插画",
+    "image": "https://你的图床域名/photo003.webp",
+    "prompt_zh": "幻想世界，精美数字插画，梦幻光影",
+    "prompt_en": "Fantasy world, detailed digital illustration, dreamy lighting",
+    "tags": ["幻想", "插画"]
+  }
+]

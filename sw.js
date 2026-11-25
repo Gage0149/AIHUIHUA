@@ -1,0 +1,25 @@
+const VERSION = 'gallery-external-2026-11-25';
+const PRECACHE = ['./','index.html','theme.js','style.css','app.js','image-providers.js','studio.js','extras.js','zip.js','history.js','i18n.js','references.js','favicon.svg'];
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open(VERSION).then(cache => cache.addAll(PRECACHE)).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', event => {
+  event.waitUntil(caches.keys().then(keys => Promise.all(
+    keys.filter(key => key.startsWith('posewear-') && key !== VERSION).map(key => caches.delete(key))
+  )));
+});
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  const url = new URL(request.url);
+  if (request.method !== 'GET' || url.origin !== location.origin || url.pathname.startsWith('/api/')) return;
+  event.respondWith((async () => {
+    const cache = await caches.open(VERSION);
+    let response;
+    try { response = await fetch(request); }
+    catch (error) { return await cache.match(request) || Promise.reject(error); }
+    if (response.ok && response.status === 200 && !response.redirected) {
+      event.waitUntil(cache.put(request, response.clone()).catch(() => {}));
+    }
+    return response;
+  })());
+});
