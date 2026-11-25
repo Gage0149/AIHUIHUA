@@ -233,6 +233,18 @@
     const view = viewForHash();
     if (datasets[view]?.items !== null && datasets[view]?.items !== undefined) render(view);
   }
+  // 主导航改为即时更新历史记录和视图，避免旧提示词页异步路由抢走首次点击。
+  document.querySelectorAll('[data-view-link]').forEach(link => {
+    if (link.dataset.viewLink === 'prompts') return;
+    link.addEventListener('click', event => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const target = link.getAttribute('href');
+      if (!target || !target.startsWith('#')) return;
+      event.preventDefault();
+      if (location.hash !== target) history.pushState(null, '', target);
+      sync();
+    });
+  });
   window.addEventListener('hashchange', sync);
   window.addEventListener('popstate', sync);
   window.SITE_SHELL = {sync, refreshAdult};
