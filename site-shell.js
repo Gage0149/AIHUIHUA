@@ -8,6 +8,9 @@
     gallery: {path:'gallery/gallery.json', items:null, pending:null, error:null, filter:'全部', visible:[]},
     works: {path:'gallery/works.json', items:null, pending:null, error:null, filter:'全部', visible:[]}
   };
+  // 画廊、作品共用顶部 R18 状态；未标记的素材默认公开。
+  const isAdultItem = item => !!item && (item.adult === true || item.r18 === true || item.nsfw === true);
+  let selectedItem = null;
   const safeURL = value => {
     try {
       const result = new URL(String(value || ''), base);
@@ -68,7 +71,10 @@
     const filters = $('#' + view + 'Filters');
     const empty = $('#' + view + 'Empty');
     const items = state.items || [];
-    const categories = [...new Set(items.map(item => item.subcategory || item.category || '其他'))];
+    const adultAllowed = document.body.classList.contains('adult');
+    const available = adultAllowed ? items : items.filter(item => !isAdultItem(item));
+    const adultHidden = items.length - available.length;
+    const categories = [...new Set(available.map(item => item.subcategory || item.category || '其他'))];
     if (state.filter !== '全部' && !categories.includes(state.filter)) state.filter = '全部';
     filters.replaceChildren();
     if (categories.length > 1) {
@@ -81,13 +87,13 @@
       });
     }
     const query = ($('#q')?.value || '').trim().toLowerCase();
-    state.visible = items.filter(item => {
+    state.visible = available.filter(item => {
       const category = item.subcategory || item.category || '其他';
       const tags = Array.isArray(item.tags) ? item.tags : [];
       const terms = [item.title, category, item.description, item.prompt_zh, item.prompt_en, ...tags].join(' ').toLowerCase();
       return (state.filter === '全部' || state.filter === category) && (!query || terms.includes(query));
     });
-    $('#' + view + 'Count').textContent = state.visible.length + ' 张图片';
+    $('#' + view + 'Count').textContent = state.visible.length + ' 张图片' + (adultHidden ? ' · ' + adultHidden + ' 张 R18 已隐藏' : '');
     grid.replaceChildren();
     const width = grid.getBoundingClientRect().width;
     const columnCount = width >= 1020 ? 6 : width >= 830 ? 5 : width >= 620 ? 4 : width >= 420 ? 3 : 2;
@@ -131,6 +137,9 @@
       if (state.error) {
         empty.append(element('strong', '', '内容读取失败'));
         empty.append(element('p', '', state.error + '；请检查 ' + state.path));
+      } else if (items.length && adultHidden === items.length && !adultAllowed) {
+        empty.append(element('strong', '', '当前图片已被 R18 开关隐藏'));
+        empty.append(element('p', '', '如已年满 18 岁，可使用页面顶部 R18 开关查看这部分素材。'));
       } else if (items.length && query) {
         empty.append(element('strong', '', '没有找到匹配的内容'));
         empty.append(element('p', '', '试试其他搜索词，或清空顶部搜索框。'));
@@ -147,6 +156,8 @@
     }
   }
   function openCard(item) {
+    if (isAdultItem(item) && !document.body.classList.contains('adult')) return;
+    selectedItem = item;
     const dialog = $('#collectionDialog');
     const url = safeURL(item.image || item.thumbnail);
     const image = $('#collectionDialogImage');
@@ -215,8 +226,15 @@
     const columns = width >= 1020 ? 6 : width >= 830 ? 5 : width >= 620 ? 4 : width >= 420 ? 3 : 2;
     if (columns !== state.columnCount) render(view);
   });
+  function refreshAdult() {
+    if (selectedItem && isAdultItem(selectedItem) && !document.body.classList.contains('adult') && $('#collectionDialog').open) {
+      $('#collectionDialog').close();
+    }
+    const view = viewForHash();
+    if (datasets[view]?.items !== null && datasets[view]?.items !== undefined) render(view);
+  }
   window.addEventListener('hashchange', sync);
   window.addEventListener('popstate', sync);
-  window.SITE_SHELL = {sync};
+  window.SITE_SHELL = {sync, refreshAdult};
   sync();
 })();

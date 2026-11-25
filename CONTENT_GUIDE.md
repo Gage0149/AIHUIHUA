@@ -31,6 +31,7 @@
     "description": "使用 AI 绘制的电影风格概念作品",
     "prompt_zh": "夜色街道，孤独旅人，电影级灯光，真实摄影质感",
     "prompt_en": "A lone traveler in a city at night, cinematic light, realistic photography",
+    "adult": false,
     "tags": ["夜景", "电影感", "人物"]
   }
 ]
@@ -39,6 +40,15 @@
 ### 画廊数据格式
 
 字段与作品一致，直接在 `gallery/gallery.json` 内增加内容即可。若是你自己收集的真实内容，可以删除记录里的 `"demo": true`。此标记只用于提醒用户当前显示的是演示图片。
+
+## R18 成人内容控制
+
+顶部 R18 开关在 **首页、提示词、画廊、作品** 中共用同一个状态，默认关闭，并保存在当前浏览器中。
+
+- 姿势与服装等原提示词图库沿用原本的成人内容标记。
+- 在 `gallery/gallery.json` 或 `gallery/works.json` 中，将某项设置为 `"adult": true`（也兼容 `"r18": true`），关闭 R18 时该项将自动隐藏，打开后才会出现。
+- 不标记或写 `"adult": false` 的图片默认公开；请勿仅通过标题判断是否成人向。
+- R18 仅影响显示，**不是访问控制**。GitHub Pages 的 JSON 和图片直链是公开可访问的，不要把需要保密或不能公开分发的素材放进静态仓库。
 
 ## 更换首页背景
 

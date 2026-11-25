@@ -767,16 +767,18 @@ function openById(id){
  lbOpen(st.list.indexOf(it));
 }
 function route(){const [t,id,ref]=location.hash.slice(1).split('/');
+ // 首页、画廊、作品由 site-shell.js 管理；不允许旧图库路由重写其 hash。
+ if(!t||t==='home'||t==='gallery'||t==='works'||t==='custom-gallery')return;
  if(t==='workbench')return setTab(Object.hasOwn(PFX,id)?id:'pose',null,ref||'');
  const tab=TABS.includes(t)?t:'pose';if(!id&&tab==st.tab&&st.list.length)return;if(tab!=st.tab||!st.list.length||!id)setTab(tab,id&&decodeURIComponent(id));else openById(decodeURIComponent(id))}
 // 成人内容开关
-function ageSet(on,anim){st.adult=on;SV('adult',on);if(on)SV('ageOk',true);document.body.classList.toggle('adult',on);$('#adultSw').setAttribute('aria-checked',on);$('#adultSw').title=on?'成人向内容已显示，点击关闭':'成人向内容已隐藏，点击打开';counts();
+function ageSet(on,anim){st.adult=on;SV('adult',on);if(on)SV('ageOk',true);document.body.classList.toggle('adult',on);$('#adultSw').setAttribute('aria-checked',on);$('#adultSw').title=on?'成人向内容已显示，点击关闭':'成人向内容已隐藏，点击打开';counts();window.SITE_SHELL?.refreshAdult?.();
  const origin=!$('#lb').hidden&&st.tab!=='history'&&st.list[li];
  if(origin&&(!ok(origin)||!ok(previewItem())))lbClose(false,true);
  if(FDEF[st.tab]){const f=()=>{if(FDEF[st.tab]){drawFilters();apply();tray();
   if(origin&&!$('#lb').hidden&&!closing){li=st.list.indexOf(origin);if(li<0)lbClose(false,true);else lbDraw()}
  }};anim?viewT(f):f()}window.WB&&WB.show&&st.tab=='studio'&&WB.show()}
-let ageCb=null;function ageAsk(cb){ageCb=cb||null;const seen=LS('ageOk');$('#ageT').textContent=cb?'这是成人向内容':'显示成人向内容？';$('#ageP').textContent=(cb?'要查看它，需要打开顶部的「18+」开关。':'包括双人互动、性感类姿势、深度姿势里的双人图，以及内衣、性感类服装。')+(seen?'打开后随时可以再关上。':'仅适合已满 18 岁的用户。只需确认一次，之后用顶部开关随时打开或关闭。');$('#ageY').textContent=seen?'打开 18+ 开关':'我已满 18 岁，打开';openDialog($('#ageBox'),$('#ageY'))}
+let ageCb=null;function ageAsk(cb){ageCb=cb||null;const seen=LS('ageOk');$('#ageT').textContent=cb?'这是成人向内容':'显示成人向内容？';$('#ageP').textContent=(cb?'要查看它，需要打开顶部的「18+」开关。':'包括双人互动、性感类姿势、深度姿势里的双人图，以及内衣、性感类服装。')+(seen?'打开后随时可以再关上。':'仅适合已满 18 岁的用户，包括画廊和作品中标记为 R18 的图片。只需确认一次，之后可在任意页面使用顶部开关。');$('#ageY').textContent=seen?'打开 18+ 开关':'我已满 18 岁，打开';openDialog($('#ageBox'),$('#ageY'))}
 $('#adultSw').onclick=()=>{if(st.adult){ageSet(false,1);toast('已关闭成人向内容')}else if(LS('ageOk')){ageSet(true,1);toast('已显示成人向内容')}else ageAsk()};
 $('#ageY').onclick=()=>{closeDialog($('#ageBox'));ageSet(true,!ageCb);toast('已显示成人向内容，可用顶部开关关闭');const c=ageCb;ageCb=null;c&&c()};
 $('#ageN').onclick=$('#ageBox').onclick=e=>{if(e.target.id!='ageN'&&e.target.id!='ageBox')return;closeDialog($('#ageBox'));ageCb=null};
