@@ -1414,3 +1414,31 @@ body[data-view="works"] #pageWorks{display:block}
   .collection-dialog-copy{padding:20px}
 }
 @media(prefers-reduced-motion:reduce){.home-photo{animation:none}.masonry-card,.home-cta{transition:none}}
+
+
+/* 2026-11: 筛选标签换行，避免横向溢出 */
+#filters .frow{display:flex;flex-wrap:wrap;overflow:visible;min-width:0;max-width:100%;gap:8px 7px;align-items:center}
+#filters .frow>*{flex-shrink:0}
+#filters .frow .chip{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+#filters .frow label{align-self:center;min-width:40px}
+@media(max-width:640px){
+  #filters{padding-left:14px;padding-right:14px}
+  #filters .frow{gap:7px 5px}
+  #filters .frow .chip{font-size:12px;padding:7px 10px}
+}
+
+/* 画廊和作品均使用 6 列桌面瀑布流；列数由可用宽度自适应 */
+.masonry{
+  display:grid;
+  grid-template-columns:repeat(var(--masonry-columns,6),minmax(0,1fr));
+  align-items:start;
+  gap:14px;
+  columns:initial;
+}
+.masonry-column{display:flex;flex-direction:column;min-width:0;gap:14px}
+.masonry-column .masonry-card{display:block;break-inside:auto;margin:0;width:100%;min-width:0}
+@media(max-width:640px){
+  .masonry{gap:9px}
+  .masonry-column{gap:9px}
+  .masonry-column .masonry-caption{padding:10px 9px 12px}
+}

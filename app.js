@@ -79,13 +79,9 @@ async function copy(text,label){
 }
 // Copied references use the public deployment origin, including when previewing locally.
 const publicSite=document.querySelector('link[rel=canonical]').href;
-const copyRefs=$('#copyRefs');
-copyRefs.checked=LS('copyRefs')!==false;
-copyRefs.onchange=()=>SV('copyRefs',copyRefs.checked);
 function copyBrief(text, items, lang, label){
- if(!copyRefs.checked)return copy(text,label);
- const refs=items.map(it=>it && PoseWearReferences.reference(it,it.ai??0,publicSite,lang,AH||publicSite));
- return copy(PoseWearReferences.formatBrief(text,refs,lang),label);
+ // 只复制提示词文字，不附加图片 URL、引用信息或网页地址。
+ return copy(String(text||''),label);
 }
 function counts(){
  const bars=$$('.tabs [data-library-menu] [data-tab]');
@@ -308,10 +304,7 @@ function compactSelection(selected){
 }
 
 function combo(lang){
- return visibleSelection().map(it=>{
-  const {label}=PoseWearReferences.reference(it,it.ai??0,publicSite,lang,AH||publicSite);
-  return label+' — '+prompt(it,lang);
- }).join('\n');
+ return visibleSelection().map(it=>prompt(it,lang)).filter(Boolean).join('\n');
 }
 let trayOpen=false;
 function trayThumbnail(item){

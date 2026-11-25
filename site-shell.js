@@ -89,6 +89,12 @@
     });
     $('#' + view + 'Count').textContent = state.visible.length + ' 张图片';
     grid.replaceChildren();
+    const width = grid.getBoundingClientRect().width;
+    const columnCount = width >= 1020 ? 6 : width >= 830 ? 5 : width >= 620 ? 4 : width >= 420 ? 3 : 2;
+    state.columnCount = columnCount;
+    grid.style.setProperty('--masonry-columns', String(columnCount));
+    const columns = Array.from({length: columnCount}, () => element('div', 'masonry-column'));
+    grid.append(...columns);
     state.visible.forEach((item, index) => {
       const title = item.title || '未命名作品';
       const button = element('button', 'masonry-card');
@@ -117,7 +123,7 @@
       const excerpt = item.prompt_zh || item.prompt_en || item.description;
       if (excerpt) caption.append(element('span', 'masonry-description', excerpt));
       button.append(visual, caption);
-      grid.append(button);
+      columns[index % columnCount].append(button);
     });
     empty.hidden = state.visible.length > 0;
     if (!state.visible.length) {
@@ -201,6 +207,14 @@
     if (datasets[view]) setTimeout(() => render(view), 0);
   });
   $('#qDone').onclick = () => search.blur();
+  window.addEventListener('resize', () => {
+    const view = viewForHash();
+    const state = datasets[view];
+    if (!state || state.items === null) return;
+    const width = $('#' + view + 'Masonry').getBoundingClientRect().width;
+    const columns = width >= 1020 ? 6 : width >= 830 ? 5 : width >= 620 ? 4 : width >= 420 ? 3 : 2;
+    if (columns !== state.columnCount) render(view);
+  });
   window.addEventListener('hashchange', sync);
   window.addEventListener('popstate', sync);
   window.SITE_SHELL = {sync};
