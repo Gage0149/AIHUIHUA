@@ -25,11 +25,13 @@ async function configureCustomGalleries(){
    TNAME[tab]=String(entry.name);PFX[tab]='x:'+entry.id+':';
    FDEF[tab]=[['cat','分类']];SUGG[tab]=Array.isArray(entry.suggestions)?entry.suggestions:[];
    TABS.splice(TABS.indexOf('studio'),0,tab);
-   const button=document.createElement('button');button.type='button';button.dataset.tab=tab;
-   const label=document.createElement('span');label.textContent=entry.name;
-   const count=document.createElement('i');count.className='nav-count';
-   const number=document.createElement('b');number.dataset.n=String(Number.isSafeInteger(entry.count)&&entry.count>=0?entry.count:0);number.dataset.stat=tab;
-   count.append(number);button.append(label,count);host.append(button);
+   if(entry.id!=='gallery'){
+    const button=document.createElement('button');button.type='button';button.dataset.tab=tab;
+    const label=document.createElement('span');label.textContent=entry.name;
+    const count=document.createElement('i');count.className='nav-count';
+    const number=document.createElement('b');number.dataset.n=String(Number.isSafeInteger(entry.count)&&entry.count>=0?entry.count:0);number.dataset.stat=tab;
+    count.append(number);button.append(label,count);host.append(button);
+   }
   }
   host.hidden=!host.querySelector('button');
  }catch(error){console.warn('自定义图库配置加载失败',error)}
