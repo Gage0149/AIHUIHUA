@@ -1,10 +1,29 @@
 [
   {
-  "id": "new-1795604264185",
-  "title": "新图片",
-  "subcategory": "未分类",
-  "image": "",
-  "prompt_zh": "",
+  "id": "new-0001",
+  "title": "新中式极简艺术封面",
+  "subcategory": "艺术",
+  "image": "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU10YXdiQUlKWm5URTNGRS1PRVptSWFULTFqSnIwQUFuOE1BQUljd0RCRXJJVnJGOTlYb2VFOUJBIiwiZSI6InBuZyIsIm4iOiJwYXN0ZV8xNzk1NjA0NTA1MDA4XzEucG5nIiwibSI6ImltYWdlL3BuZyIsInMiOjI0MDk1NzMsInQiOjE3OTU2MDQ1MTI2NjYsIm1pZCI6NDV9.pzPy2NfBw-0J-M9Pm9bweF7SJQGOCQyTE6nMrSC1azI.png",
+  "prompt_zh": "主体：
+现代新中式极简艺术封面，气质明艳的成年东方女性，身材高挑苗条，腰肢纤细，曲线柔美，散发清雅性感魅力。
+
+人物・表情：
+精致圆润鹅蛋脸，乌黑长发盘成慵懒低髻，几缕碎发轻垂，肌肤白皙透亮，淡橘裸妆，眉眼含笑，神情灵动。
+
+服装・姿势：
+身穿浅鹅黄色修身抹胸连衣裙，露出精致肩颈，脚踩细带凉鞋，踮脚伸手摘取枝头青果，身姿轻盈舒展。
+
+背景・光线：
+现代东方柑橘庭院，米白色弧形墙面，翠绿枝叶与金黄果实点缀，清晨阳光倾洒，明亮清透，充满夏日生机。
+
+构图・镜头：
+竖版3:4封面，侧面低角度全身抓拍，人物位于画面左侧，右侧大面积奶白留白，35mm镜头，自然景深。
+
+质感・风格：
+超写实高端时尚摄影，细腻真实肤质，柔亮自然光，鹅黄与奶白配色，清新明媚，轻奢杂志质感。
+
+补充要求：
+高颜值新中式极简封面，右侧留白竖排精致宋体「青柠序夏」，辅以小字「风有清香，夏有回响」，排版雅致。",
   "prompt_en": "",
   "adult": false,
   "tags": [  "人像", "艺术"
