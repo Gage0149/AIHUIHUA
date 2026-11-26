@@ -359,7 +359,7 @@
   }
   function valuesFor(item,info){
     const key=info?.kind==='builtin'?({portrait:'sec',expr:'emo',dyn:'era'}[info.id]||'cat'):'subcategory';
-    const titleKey='title'in item?'title':'ti'in item?'ti':null;
+    const titleKey=info?.kind==='video'?'title':'title'in item?'title':'ti'in item?'ti':null;
     const zhKey='prompt_zh'in item?'prompt_zh':'zh'in item?'zh':'prompt_zh';
     const enKey='prompt_en'in item?'prompt_en':'en'in item?'en':'prompt_en';
     return {categoryKey:key,titleKey,zhKey,enKey};
