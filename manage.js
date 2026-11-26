@@ -12,7 +12,7 @@
     ['prop','道具','props.json'],['furn','家具','furniture.json']
   ];
   const configPath = 'gallery/categories.json';
-  const imageKeys = new Set(['image','thumbnail','preview','original','t','m','i','o']);
+  const imageKeys = new Set(['image','thumbnail','cover','poster','preview','original','t','m','i','o']);
   const states = new Map();
   let config = {groups:[],categories:[],collectionFilters:{gallery:[],works:[]}};
   let configDirty = false;
@@ -58,6 +58,7 @@
   const filenames = () => [
     {path:'gallery/gallery.json',name:'画廊',kind:'gallery'},
     {path:'gallery/works.json',name:'作品',kind:'works'},
+    {path:'gallery/video-assets.json',name:'视频',kind:'video'},
     ...config.categories.filter(c => c.id !== 'gallery' && validPath(c.file)).map(c => ({path:cleanPath(c.file),name:`自定义 · ${c.name}`,kind:'custom'})),
     ...builtins.map(([id,name,path]) => ({path,name:`原图库 · ${name}`,kind:'builtin',id}))
   ];
@@ -309,6 +310,7 @@
       const source=await loadSource(requested);
       selectedIndex=-1;draft=null;draftNew=false;formDirty=false;
       setText('#sourceStatus',`${source.items.length} 条内容 · ${requested}`);
+      setText('#emptyEditor',descriptor(requested)?.kind==='video'?'从左侧选择一条视频，编辑视频直链、封面、介绍和提示词。':'从左侧选择一张图片，即可编辑图片直链、提示词和 R18 标记。');
       renderItems();renderEditor();updateDirty();return true;
     }catch(error){sourcePath=old;safeSelect('#sourceSelect',old);toast(error.message);setText('#sourceStatus',error.message);return false;}
   }
@@ -334,7 +336,8 @@
     if(!matches.length)el.textContent='没有匹配的素材';
     setText('#listNote',`匹配 ${matches.length} 条，最多显示前 150 条。可通过搜索精确定位。`);
     const isNewAllowed=info?.kind!=='builtin';
-    $('#newItem').disabled=!isNewAllowed;$('#duplicateItem').disabled=!isNewAllowed||!draft;
+    $('#newItem').disabled=!isNewAllowed;$('#newItem').textContent=info?.kind==='video'?'+ 新增视频':'+ 新增图片';
+    $('#duplicateItem').disabled=!isNewAllowed||!draft;
   }
   function selectItem(index) {
     if(!unsavedGuard())return;
@@ -380,7 +383,9 @@
       const heading=document.createElement('h5');heading.textContent=title;group.append(heading);
       for(const field of entries){
         const row=document.createElement('div');row.className='image-row';
-        const label=document.createElement('label');label.textContent=({t:'缩略图 t',m:'中图 m',i:'高清图 i',o:'原图 o',image:'展示图',thumbnail:'缩略图',preview:'预览图',original:'原图'})[field.key]||field.label;
+        const label=document.createElement('label');
+        const videoSource=descriptor(sourcePath)?.kind==='video';
+        label.textContent=({t:'缩略图 t',m:'中图 m',i:'高清图 i',o:'原图 o',image:videoSource?'视频封面':'展示图',thumbnail:videoSource?'视频封面':'缩略图',cover:'视频封面',poster:'视频封面 Poster',preview:'预览图',original:'原图'})[field.key]||field.label;
         const input=document.createElement('input');input.type='url';input.placeholder='https://你的图床/...';input.value=field.value;
         input.dataset.path=JSON.stringify(field.path);input.addEventListener('input',()=>{
           let target=draft;for(const part of field.path.slice(0,-1))target=target[part];target[field.path[field.path.length-1]]=input.value.trim();
@@ -393,10 +398,22 @@
   }
   function updateImagePreview(){
     const item=draft,fields=item?imageFields(item):[];
-    const url=(fields.find(f=>['image','t','thumbnail','preview','i','m'].includes(f.key)&&validUrl(f.value))||fields.find(f=>validUrl(f.value)))?.value;
-    const image=$('#itemPreview');image.hidden=!url;
-    $('#previewHint').hidden=!!url;
-    if(url)image.src=url;else image.removeAttribute('src');
+    const url=(fields.find(f=>['cover','poster','image','t','thumbnail','preview','i','m'].includes(f.key)&&validUrl(f.value))||fields.find(f=>validUrl(f.value)))?.value;
+    const image=$('#itemPreview'),player=$('#itemVideoPreview');
+    const isVideo=descriptor(sourcePath)?.kind==='video';
+    const videoUrl=isVideo?String(item?.video_url||item?.video||item?.src||'').trim():'';
+    const playable=isVideo&&validUrl(videoUrl);
+    player.hidden=!playable;
+    if(playable){
+      if(player.src!==videoUrl)player.src=videoUrl;
+      if(url)player.poster=url;else player.removeAttribute('poster');
+      image.hidden=true;$('#previewHint').hidden=true;
+    }else{
+      if(!player.paused)player.pause();
+      player.removeAttribute('src');player.load();
+      image.hidden=!url;$('#previewHint').hidden=!!url;
+      if(url)image.src=url;else image.removeAttribute('src');
+    }
   }
   function renderEditor() {
     const hasItem=!!draft,info=descriptor(sourcePath);
@@ -406,12 +423,26 @@
     setText('#editTitle',!hasItem?'选择一条内容开始编辑':draftNew?'新增图片':itemLabel(draft));
     if(!hasItem)return;
     const keys=valuesFor(draft,info);
+    const isVideo=info?.kind==='video';
     safeSelect('#itemId',draft.id||'');
     $('#itemId').disabled=!draftNew;
     $('#itemTitle').disabled=!keys.titleKey;
     safeSelect('#itemTitle',keys.titleKey?draft[keys.titleKey]:'');
-    $('#titleLabel').firstChild.textContent=keys.titleKey?'图片标题':'图片标题（使用中文描述）';
+    $('#titleLabel').firstChild.textContent=isVideo?'视频标题':keys.titleKey?'图片标题':'图片标题（使用中文描述）';
+    $('#itemTitle').placeholder=isVideo?'输入视频标题':'图片名称';
     const collection=!!collectionKind(sourcePath);
+    $('#itemCategoryTextWrap').firstChild.textContent=isVideo?'视频分类（可选）':collection?'二级分类':'内容分类';
+    $('#itemCategory').placeholder=isVideo?'如：AI短片、动态写真':'如：人物写真';
+    $('#videoUrlField').hidden=!isVideo;
+    safeSelect('#itemVideoUrl',draft.video_url||draft.video||draft.src||'');
+    $('#itemVideoUrl').required=isVideo;
+    $('#itemDescription').parentElement.firstChild.textContent=isVideo?'视频介绍':'图片介绍';
+    $('#itemTags').parentElement.firstChild.textContent=isVideo?'视频标签（逗号分隔）':'图片标签（仅说明图片，不影响菜单）';
+    $('#itemZh').parentElement.firstChild.textContent=isVideo?'中文视频提示词':'中文提示词';
+    $('#itemEn').parentElement.firstChild.textContent=isVideo?'英文视频提示词':'英文提示词';
+    $('.image-editor-heading h4').textContent=isVideo?'视频封面地址':'图片地址';
+    $('.image-editor-heading .muted').textContent=isVideo?'填写封面图直链，用于视频播放前展示':'可分别修改缩略图、预览图、原图及多角度图片';
+    $('#copyCurrentItem').textContent=isVideo?'复制这条视频的 JSON':'复制这条图片的 JSON';
     $('#itemCategoryTextWrap').hidden=collection;
     $('#itemCategorySelectWrap').hidden=!collection;
     $('#itemCategoryActions').hidden=!collection;
@@ -442,9 +473,15 @@
     const adult=$('#itemAdult').checked;
     if(info.kind==='builtin')draft.a=adult;
     else {draft.adult=adult;delete draft.r18;delete draft.nsfw;delete draft.a;}
+    const isVideo=info.kind==='video';
+    if(isVideo){
+      const videoUrl=$('#itemVideoUrl').value.trim();
+      if(!validUrl(videoUrl))return toast('请填写有效的视频直链（HTTP 或 HTTPS，建议 MP4 / WebM）');
+      draft.video_url=videoUrl;
+    }
     const invalid=imageFields(draft).find(f=>f.value && !validUrl(f.value));
-    if(invalid)return toast('图片地址必须是完整的 HTTP(S) 直链：'+invalid.label);
-    if(info.kind!=='builtin'&&!draft.image&&!draft.thumbnail)return toast('请先填写展示图片地址');
+    if(invalid)return toast((isVideo?'视频封面':'图片')+'地址必须是完整的 HTTP(S) 直链：'+invalid.label);
+    if(info.kind!=='builtin'&&!isVideo&&!draft.image&&!draft.thumbnail)return toast('请先填写展示图片地址');
     if(draftNew){source.items.push(clone(draft));selectedIndex=source.items.length-1;draftNew=false;}
     else source.items[selectedIndex]=clone(draft);
     if(info.kind==='custom'){
@@ -454,7 +491,7 @@
     markDirty(sourcePath);formDirty=false;
     draft=clone(source.items[selectedIndex]);renderItems();renderCategories();renderEditor();
     if(collection)renderCollectionFilterList();
-    toast('图片已保存到本次编辑会话；可以直接复制完整图库 JSON 发布');
+    toast((isVideo?'视频':'图片')+'已保存到本次编辑会话；可以直接复制完整 JSON 发布');
   }
   function applyRaw(){
     try{const value=JSON.parse($('#itemRaw').value);
@@ -546,9 +583,9 @@
     toast(success);
   }
   async function copyCurrentItem(){
-    if(!draft)return toast('请先在左侧选择图片');
+    if(!draft)return toast('请先在左侧选择内容');
     if(formDirty||draftNew)return toast('请先点击「保存当前条目」，再复制 JSON');
-    try{await copyText(JSON.stringify(draft,null,2)+'\n','已复制当前图片的 JSON 对象；追加到数组时记得用英文逗号分隔');}
+    try{await copyText(JSON.stringify(draft,null,2)+'\n','已复制当前条目的 JSON 对象；追加到数组时记得用英文逗号分隔');}
     catch(error){toast(error.message);}
   }
   async function copyCurrentSource(){
@@ -669,6 +706,7 @@
     $$('.manage-tabs button').forEach(button=>button.onclick=()=>activatePanel(button.dataset.panel));
     $('#quickGallery').onclick=()=>quickNew('gallery/gallery.json');
     $('#quickWorks').onclick=()=>quickNew('gallery/works.json');
+    $('#quickVideo').onclick=()=>quickNew('gallery/video-assets.json');
     $('#quickCategories').onclick=()=>{
       $('#collectionFilterView').value=collectionKind(sourcePath)||'gallery';selectCollectionFilter('');activatePanel('categories');
       $('.collection-visibility-section').scrollIntoView({behavior:'smooth',block:'start'});
@@ -685,6 +723,7 @@
     $('#itemSearch').oninput=renderItems;
     $('#newItem').onclick=()=>newItem(false);$('#duplicateItem').onclick=()=>newItem(true);
     $('#itemForm').onsubmit=saveItem;$('#deleteItem').onclick=deleteItem;$('#applyRaw').onclick=applyRaw;
+    $('#itemVideoUrl').addEventListener('input',()=>{if(draft){draft.video_url=$('#itemVideoUrl').value.trim();formDirty=true;updateImagePreview();}});
     $('#copyCurrentItem').onclick=copyCurrentItem;$('#copyCurrentSource').onclick=copyCurrentSource;
     for(const input of ['#itemId','#itemTitle','#itemCategory','#itemZh','#itemEn','#itemDescription','#itemTags','#itemAdult'])
       $(input).addEventListener('input',()=>{formDirty=true;});
