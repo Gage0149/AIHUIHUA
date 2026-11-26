@@ -1305,11 +1305,20 @@ body[data-view="works"] #sentinel,
 body[data-view="works"] #empty,
 body[data-view="works"] #studio,
 body[data-view="works"] #histSec,
-body[data-view="works"] #workspaceDock{display:none!important}
-#pageHome,#pageGallery,#pageWorks{display:none}
+body[data-view="works"] #workspaceDock,
+body[data-view="video"] .bar,
+body[data-view="video"] #filters,
+body[data-view="video"] #grid,
+body[data-view="video"] #sentinel,
+body[data-view="video"] #empty,
+body[data-view="video"] #studio,
+body[data-view="video"] #histSec,
+body[data-view="video"] #workspaceDock{display:none!important}
+#pageHome,#pageGallery,#pageWorks,#pageVideo{display:none}
 body[data-view="home"] #pageHome{display:flex}
 body[data-view="gallery"] #pageGallery,
-body[data-view="works"] #pageWorks{display:block}
+body[data-view="works"] #pageWorks,
+body[data-view="video"] #pageVideo{display:block}
 .page-home{position:relative;isolation:isolate;align-items:center;justify-content:center;min-height:calc(100dvh - var(--hdr,72px));overflow:hidden;background:radial-gradient(circle at 70% 10%,#8f8b9a 0,transparent 45%),linear-gradient(135deg,#1e2933,#39434b 42%,#161c29);color:#fff;text-align:center}
 .home-photo,.home-scrim{position:absolute;inset:0;width:100%;height:100%}
 .home-photo{z-index:-2;object-fit:cover;object-position:center 47%;animation:hero-arrive 1.5s both}
@@ -1462,3 +1471,14 @@ body[data-view="works"] #pageWorks{display:block}
 .masonry-column .masonry-visual{min-height:0}
 .masonry-column .masonry-visual.image-failed{min-height:180px}
 .masonry-column .masonry-image-error{min-height:180px}
+
+/* 独立视频栏目 */
+.video-visual{min-height:0;aspect-ratio:16/9;background:#111}
+.video-visual video{display:block;width:100%;height:auto;max-height:520px;aspect-ratio:16/9;object-fit:contain;background:#111}
+.video-visual img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.video-visual .video-missing-source{display:block;padding:8px 12px;color:#fff;background:#222;text-align:center;font-size:12px}
+.video-card{cursor:default}
+.video-card:hover{transform:translateY(-2px)}
+.video-prompt{padding:0 16px 15px;color:var(--tx2);font-size:12px}
+.video-prompt summary{cursor:pointer;color:var(--tx2);font-weight:600}
+.video-prompt p{margin:8px 0 0;white-space:pre-wrap;line-height:1.7}
