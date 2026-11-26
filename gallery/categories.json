@@ -1,10 +1,5 @@
 {
   "groups": [
-    {
-      "id": "video",
-      "name": "视频"
-    }
-  ],
   "collectionFilters": {
     "gallery": [
       {
