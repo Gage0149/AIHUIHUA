@@ -61,7 +61,18 @@ async function configureCustomGalleries(){
    }
   }
   defaultHost.hidden=!defaultHost.querySelector('button');
-  for(const {details,section} of groups.values())details.hidden=!section.querySelector('button');
+  for(const {details,section} of groups.values()){
+   // 一级菜单可以先创建，再逐步增加二级图库；无子分类时显示明确的空状态。
+   if(!section.querySelector('button[data-tab]')){
+    const empty=document.createElement('p');empty.className='library-empty-message';
+    empty.textContent='暂无二级分类。这个菜单已经创建成功，可以稍后再添加内容。';
+    const link=document.createElement('a');link.className='library-empty-action';
+    link.href=siteAssetUrl('manage.html');link.target='_blank';link.rel='noopener noreferrer';
+    link.textContent='去内容管理添加分类 ↗';
+    section.append(empty,link);
+   }
+   details.hidden=false;
+  }
  }catch(error){console.warn('自定义图库配置加载失败',error)}
 }
 function counterpartType(item){

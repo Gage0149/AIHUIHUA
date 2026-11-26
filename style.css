@@ -790,6 +790,9 @@ html:lang(ja) .st-r .hl:empty::before{content:"生成した画像はこの端末
 .library-menu.solo{display:flex;flex-direction:column;gap:8px;width:13.5rem;padding:9px}
 .library-menu.solo section+section{border-top:1px solid var(--line);padding-top:8px}
 .library-menu.solo h2{margin:0 8px 3px}
+.library-empty-message{margin:8px 8px 9px;padding:12px 11px;border-radius:10px;background:var(--sf);font-size:12px;line-height:1.75;color:var(--tx2)}
+.library-empty-action{display:block;margin:0 8px 10px;font-size:12px;font-weight:650;color:var(--ac);text-decoration:none}
+.library-empty-action:hover{text-decoration:underline}
 .library-menu h2,.notice-pop h2{font:600 12px/1.4 var(--sans);color:var(--tx2);margin:0 8px 5px}
 .library-menu button,.personal-menu button{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:38px;width:100%;border-radius:9px;padding:7px 9px;text-align:left;font-size:14px;font-weight:500;color:var(--tx)}
 .tabs .shell-pop button i{display:inline-block;color:var(--mu);font-size:11px;font-style:normal;font-variant-numeric:tabular-nums;opacity:1}
