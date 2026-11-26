@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>内容与素材管理 · 绘影 AIHUIHUA</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="manage.css?v=4">
+  <link rel="stylesheet" href="manage.css?v=5">
 </head>
 <body>
   <header class="manage-top">
@@ -109,6 +109,7 @@
             <div id="itemCategoryActions" class="row-actions" hidden><button type="button" id="goCategoryConfig" class="subtle">＋ 新增或管理二级分类</button></div>
             <label>中文提示词<textarea id="itemZh" rows="3"></textarea></label>
             <label>英文提示词<textarea id="itemEn" rows="3"></textarea></label>
+            <label id="referenceImagesField" hidden>参考图地址（每行一个，仅画廊 / 作品）<textarea id="itemReferenceImages" rows="3" placeholder="https://example.com/reference-01.webp&#10;https://example.com/reference-02.webp"></textarea><small class="muted small">选填。每行填写一张参考图的公开 HTTPS / HTTP 直链，最多可添加多张。</small></label>
             <label>图片介绍<textarea id="itemDescription" rows="2"></textarea></label>
             <label>图片标签（仅说明图片，不影响菜单）<input id="itemTags" placeholder="如：人像, 电影感, 写真"></label>
             <p class="field-hint">标签会出现在图片详情中，也可以用于搜索；无论添加多少标签，都不会新增分类按钮。</p>
@@ -162,6 +163,6 @@
   </main>
   <div id="toast" role="status" aria-live="polite"></div>
   <script src="zip.js" defer></script>
-  <script src="manage.js?v=4" defer></script>
+  <script src="manage.js?v=5" defer></script>
 </body>
 </html>
