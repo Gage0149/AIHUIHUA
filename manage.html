@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>内容管理 · 绘影 AIHUIHUA</title>
+  <title>内容与素材管理 · 绘影 AIHUIHUA</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="manage.css?v=3">
+  <link rel="stylesheet" href="manage.css?v=4">
 </head>
 <body>
   <header class="manage-top">
@@ -16,12 +16,13 @@
   <main class="manage-main">
     <div class="intro">
       <p class="eyebrow">AIHUIHUA · CONTENT STUDIO</p>
-      <h1>分类与图片管理</h1>
-      <p>先选好分类，再添加图片和提示词，最后复制 JSON 到 GitHub 发布。所有编辑都只保存在当前页面，不会直接改动线上网站。</p>
+      <h1>分类与内容管理</h1>
+      <p>管理提示词分类、画廊图片、个人作品和独立视频栏目。编辑内容先保存在当前页面，再导出 JSON 发布到 GitHub。</p>
     </div>
     <div class="quick-actions" aria-label="快捷操作">
       <button id="quickGallery" type="button" class="quick-action"><span class="quick-icon">＋</span><span><strong>新增画廊图片</strong><small>收藏提示词与参考图</small></span></button>
       <button id="quickWorks" type="button" class="quick-action"><span class="quick-icon">＋</span><span><strong>新增作品图片</strong><small>展示自己的 AI 作品</small></span></button>
+      <button id="quickVideo" type="button" class="quick-action"><span class="quick-icon">▶</span><span><strong>新增视频</strong><small>管理独立视频栏目</small></span></button>
       <button id="quickCategories" type="button" class="quick-action"><span class="quick-icon">☷</span><span><strong>管理分类</strong><small>菜单和 R18 独立设置</small></span></button>
       <button id="quickPublish" type="button" class="quick-action"><span class="quick-icon">↗</span><span><strong>复制 JSON 发布</strong><small>更新 GitHub 对应文件</small></span></button>
     </div>
@@ -38,7 +39,7 @@
       <div class="manage-columns">
         <article class="panel">
           <div class="panel-title"><h3>新增一级菜单</h3><button type="button" class="subtle" id="newGroup">+ 新建</button></div>
-          <div class="muted small">例如：视频、摄影技巧。可以先创建一级菜单，不添加二级图库也会在网站显示；点击后会提示「暂无二级分类」。</div>
+          <div class="muted small">例如：摄影技巧。这里管理提示词菜单；顶部独立「视频」栏目不在此处创建，请到「图片与视频」内容管理中维护。</div>
           <div class="item-rows" id="groupList"></div>
           <form id="groupForm" class="edit-form">
             <label>菜单名称<input id="groupName" placeholder="如：摄影技巧" maxlength="30" required></label>
@@ -83,7 +84,7 @@
     </section>
 
     <section id="panel-content" class="workspace" hidden aria-labelledby="contentHeading">
-      <div class="section-head"><div><h2 id="contentHeading">维护图片与提示词</h2><p>在左侧选择图库和图片，右侧填写内容。画廊/作品的二级分类从已配置菜单中选择；标签只说明图片。保存后可以直接复制 JSON。</p></div></div>
+      <div class="section-head"><div><h2 id="contentHeading">维护图片、视频与提示词</h2><p>在左侧选择画廊、作品、视频或提示词图库。视频栏目独立使用 gallery/video-assets.json，可填写视频直链、封面、标题、分类、介绍和提示词；保存后可导出完整 JSON。</p></div></div>
       <div class="content-layout">
         <aside class="panel content-sidebar">
           <label>选择图库<select id="sourceSelect"></select></label>
@@ -104,6 +105,7 @@
               <label class="checkbox-line"><input id="itemAdult" type="checkbox"> R18 成人向（关闭开关时隐藏）</label>
             </div>
             <p id="itemCategoryHelp" class="field-hint">二级分类决定筛选归属；如需新菜单，请先在「分类配置」中创建。</p>
+            <label id="videoUrlField" hidden>视频文件直链（MP4 / WebM）<input id="itemVideoUrl" type="url" placeholder="https://example.com/video.mp4"></label>
             <div id="itemCategoryActions" class="row-actions" hidden><button type="button" id="goCategoryConfig" class="subtle">＋ 新增或管理二级分类</button></div>
             <label>中文提示词<textarea id="itemZh" rows="3"></textarea></label>
             <label>英文提示词<textarea id="itemEn" rows="3"></textarea></label>
@@ -112,11 +114,11 @@
             <p class="field-hint">标签会出现在图片详情中，也可以用于搜索；无论添加多少标签，都不会新增分类按钮。</p>
             <div class="image-editor-heading"><h4>图片地址</h4><span class="muted small">可分别修改缩略图、预览图、原图及多角度图片</span></div>
             <div id="imageFields" class="image-fields"></div>
-            <div class="preview"><img id="itemPreview" alt="图片预览" hidden><span id="previewHint">暂无可预览的图片</span></div>
+            <div class="preview"><img id="itemPreview" alt="图片或视频封面预览" hidden><video id="itemVideoPreview" controls playsinline preload="metadata" hidden></video><span id="previewHint">暂无可预览的图片或视频</span></div>
             <details class="raw-details"><summary>高级：直接编辑该条目的 JSON</summary><p class="muted small">点击「应用 JSON」会覆盖上方尚未保存的表单内容。适合修改原始素材的特殊字段。</p><textarea id="itemRaw" rows="12" spellcheck="false"></textarea><button type="button" class="subtle" id="applyRaw">校验并应用 JSON</button></details>
-            <div class="editor-actions"><button type="submit" class="primary">保存当前条目</button><button type="button" class="subtle" id="copyCurrentItem">复制这条图片的 JSON</button><button type="button" class="subtle" id="copyCurrentSource">复制整个图库 JSON</button><span class="muted small">先保存，再复制；完整图库 JSON 可直接覆盖 GitHub 同名文件。</span></div>
+            <div class="editor-actions"><button type="submit" class="primary">保存当前条目</button><button type="button" class="subtle" id="copyCurrentItem">复制当前条目的 JSON</button><button type="button" class="subtle" id="copyCurrentSource">复制整个图库 JSON</button><span class="muted small">先保存，再复制；完整图库 JSON 可直接覆盖 GitHub 同名文件。</span></div>
           </form>
-          <div id="emptyEditor" class="empty-editor">从左侧选择一张图片，即可编辑图片直链、提示词和 R18 标记。</div>
+          <div id="emptyEditor" class="empty-editor">从左侧选择图片或视频，即可编辑对应直链、封面、提示词和 R18 标记。</div>
         </article>
       </div>
     </section>
@@ -160,6 +162,6 @@
   </main>
   <div id="toast" role="status" aria-live="polite"></div>
   <script src="zip.js" defer></script>
-  <script src="manage.js?v=3" defer></script>
+  <script src="manage.js?v=4" defer></script>
 </body>
 </html>
