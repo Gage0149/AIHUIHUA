@@ -352,7 +352,7 @@
     const id='new-'+Date.now();
     const fresh=info.kind==='video'
       ? {id,title:'新视频',subcategory:'未分类',video_url:'',thumbnail:'',description:'',prompt_zh:'',prompt_en:'',adult:false,tags:[]}
-      : {id,title:'新图片',subcategory:collectionKind(sourcePath)?'':'未分类',image:'',prompt_zh:'',prompt_en:'',adult:false,tags:[]};
+      : {id,title:'新图片',subcategory:collectionKind(sourcePath)?'':'未分类',image:'',prompt_zh:'',prompt_en:'',adult:false,tags:[],...(collectionKind(sourcePath)?{reference_images:[]}:{})};
     draft=duplicate&&draft?clone(draft):fresh;
     draft.id=id;draftNew=true;selectedIndex=-1;formDirty=true;
     renderItems();renderEditor();
@@ -438,6 +438,9 @@
     $('#titleLabel').firstChild.textContent=isVideo?'视频标题':keys.titleKey?'图片标题':'图片标题（使用中文描述）';
     $('#itemTitle').placeholder=isVideo?'输入视频标题':'图片名称';
     const collection=!!collectionKind(sourcePath);
+    $('#referenceImagesField').hidden=!collection;
+    const referenceImages=Array.isArray(draft.reference_images)?draft.reference_images.map(entry=>typeof entry==='string'?entry:entry?.url||'').filter(Boolean):typeof draft.reference_images==='string'?[draft.reference_images]:[];
+    safeSelect('#itemReferenceImages',referenceImages.join('\n'));
     $('#itemCategoryTextWrap').firstChild.textContent=isVideo?'视频分类（可选）':collection?'二级分类':'内容分类';
     $('#itemCategory').placeholder=isVideo?'如：AI短片、动态写真':'如：人物写真';
     $('#videoUrlField').hidden=!isVideo;
@@ -478,6 +481,13 @@
     draft[keys.zhKey]=$('#itemZh').value.trim();draft[keys.enKey]=$('#itemEn').value.trim();
     if('description'in draft||$('#itemDescription').value.trim())draft.description=$('#itemDescription').value.trim();
     if('tags'in draft||$('#itemTags').value.trim())draft.tags=$('#itemTags').value.split(/[,，]/).map(s=>s.trim()).filter(Boolean);
+    if(collection){
+      const references=$('#itemReferenceImages').value.split(/\r?\n/).map(value=>value.trim()).filter(Boolean);
+      const invalidReference=references.find(value=>!validUrl(value));
+      if(invalidReference)return toast('参考图地址必须是完整的 HTTP(S) 直链：'+invalidReference);
+      if(references.length)draft.reference_images=references;
+      else delete draft.reference_images;
+    }
     const adult=$('#itemAdult').checked;
     if(info.kind==='builtin')draft.a=adult;
     else {draft.adult=adult;delete draft.r18;delete draft.nsfw;delete draft.a;}
@@ -525,7 +535,13 @@
       if(Array.isArray(value))return value.forEach(visit);
       if(!value||typeof value!=='object')return;
       for(const [key,v] of Object.entries(value)){
-        if(imageKeys.has(key)&&typeof v==='string'){
+        if(key==='reference_images'&&Array.isArray(v)){
+          v.forEach((url,index)=>{
+            if(typeof url!=='string')return;
+            const next=transform(url);
+            if(next!==url){changed++;if(apply)value[key][index]=next;}
+          });
+        }else if(imageKeys.has(key)&&typeof v==='string'){
           const next=transform(v);
           if(next!==v){changed++;if(apply)value[key]=next;}
         }else if(v&&typeof v==='object')visit(v);
@@ -733,7 +749,7 @@
     $('#itemForm').onsubmit=saveItem;$('#deleteItem').onclick=deleteItem;$('#applyRaw').onclick=applyRaw;
     $('#itemVideoUrl').addEventListener('input',()=>{if(draft){draft.video_url=$('#itemVideoUrl').value.trim();formDirty=true;updateImagePreview();}});
     $('#copyCurrentItem').onclick=copyCurrentItem;$('#copyCurrentSource').onclick=copyCurrentSource;
-    for(const input of ['#itemId','#itemTitle','#itemCategory','#itemZh','#itemEn','#itemDescription','#itemTags','#itemAdult'])
+    for(const input of ['#itemId','#itemTitle','#itemCategory','#itemZh','#itemEn','#itemReferenceImages','#itemDescription','#itemTags','#itemAdult'])
       $(input).addEventListener('input',()=>{formDirty=true;});
     $('#itemCategorySelect').onchange=()=>{formDirty=true;refreshItemCategoryChoices($('#itemCategorySelect').value);};
     $('#goCategoryConfig').onclick=()=>{
