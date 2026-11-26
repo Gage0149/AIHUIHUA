@@ -87,7 +87,7 @@
 顶部 R18 开关在 **首页、提示词、画廊、作品、视频** 中共用同一个状态，默认关闭，并保存在当前浏览器中。
 
 - 姿势与服装等原提示词图库沿用原本的成人内容标记。
-- 在 `gallery/gallery.json` 或 `gallery/works.json` 中，将某项设置为 `"adult": true`（也兼容 `"r18": true`），关闭 R18 时该项将自动隐藏，打开后才会出现。
+- 在 `gallery/gallery.json`、`gallery/works.json` 或 `gallery/video-assets.json` 中，将某项设置为 `"adult": true`（画廊 / 作品也兼容 `"r18": true`），关闭 R18 时该项将自动隐藏，打开后才会出现。
 - 不标记或写 `"adult": false` 的图片默认公开；请勿仅通过标题判断是否成人向。
 - **二级分类按钮和图片分别控制**：只有 `gallery/categories.json` 的 `collectionFilters.gallery` / `collectionFilters.works` 中**明确登记的分类**才产生菜单按钮。其中 `"adult": true` 的分类按钮在 R18 关闭时隐藏；单张图片仍只看自己的 `adult`。没有登记的 `subcategory` 不会创建按钮，但图片仍可在「全部」中出现。
 - `subcategory` 是图片所归属的**已配置分类名称**；`tags` 是每张图片的说明标签与搜索关键词，绝不影响菜单。
