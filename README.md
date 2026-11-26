@@ -1,9 +1,9 @@
 # 绘影 AIHUIHUA｜网站使用与内容维护手册
 
-> **适用版本：2026-11-25 · GitHub Pages 静态部署版**
-> 本手册根据当前仓库的真实文件、字段和页面行为编写，面向以后长期维护分类、AI 绘画提示词、画廊、作品及外链图片的站长。
+> **适用版本：2026-11-26 · GitHub Pages 静态部署版**
+> 本手册根据当前仓库的真实文件、字段和页面行为编写，面向以后长期维护分类、AI 绘画提示词、画廊、作品、视频及外链素材的站长。
 
-**常用入口：** [正式网站](https://gage0149.github.io/AIHUIHUA/) · [内容管理页面](https://gage0149.github.io/AIHUIHUA/manage.html) · [GitHub 仓库](https://github.com/Gage0149/AIHUIHUA) · [详细维护说明](CONTENT_GUIDE.md)
+**常用入口：** [正式网站](https://gage0149.github.io/AIHUIHUA/) · [内容管理页面](https://gage0149.github.io/AIHUIHUA/manage.html) · [后台管理详细使用手册](MANAGE_GUIDE.md) · [GitHub 仓库](https://github.com/Gage0149/AIHUIHUA) · [详细维护说明](CONTENT_GUIDE.md)
 
 本项目基于开源 [PoseWear](https://github.com/atuizz/posewear) 改造。网页为纯静态 HTML/CSS/JavaScript；图片通过外部 HTTPS 链接加载，分类和提示词主要保存在 JSON 文件中。**不需要单独的服务器、数据库、Node.js 构建流程或后端部署。**
 
@@ -38,7 +38,8 @@
 4. **内容管理页面不等于在线数据库**：点击「保存当前条目」只保存到当前浏览器编辑会话；**必须复制完整 JSON 粘贴到 GitHub 同名文件并提交**，或下载 ZIP、解压后上传对应 JSON，正式网站才会更新。
 5. **图片文件不必放进 GitHub**：先上传到 K-Vault、Cloudflare R2 等图床，在 JSON 中填写可公开访问的 HTTPS 图片直链。
 6. **手工修改长提示词时必须注意 JSON 换行格式**：JSON 字符串中不能直接输入裸换行，应该写 `\n`；使用管理页面普通文本框则可以直接回车换行。
-7. **R18 不是权限保护**：关闭开关只是网页隐藏对应记录，公开 JSON 和公开图片直链仍能被访问。
+7. **视频栏目**：在后台点击「新增视频」，填写视频文件直链和封面，数据保存在 `gallery/video-assets.json`；视频分类从每条视频的 `subcategory` 自动生成。
+8. **R18 不是权限保护**：关闭开关只是网页隐藏对应记录，公开 JSON、图片和视频直链仍能被访问。
 
 ## 2. 网站有什么页面、数据怎么流转
 
@@ -48,14 +49,15 @@
 | 提示词 | `/#pose` 等 | 姿势、服装、人物造型、环境与物件、自定义图库 | 仓库根目录的原始 JSON；`gallery/categories.json` 与自定义 JSON |
 | 画廊 | `/#gallery` | 收藏的 AI 绘画图像与提示词，瀑布流展示 | `gallery/gallery.json` |
 | 作品 | `/#works` | 自己生成的 AI 绘画作品，瀑布流展示 | `gallery/works.json` |
-| 内容管理 | `/manage.html` | 编辑分类、图片地址、提示词、R18，批量换图床、导出 | 读取以上 JSON；编辑不会自动回写 GitHub |
+| 视频 | `/#video` | 独立视频栏目，支持分类筛选、浏览器播放器和提示词展示 | `gallery/video-assets.json` |
+| 内容管理 | `/manage.html` | 编辑分类、图片、视频直链、提示词和 R18，批量迁移图片地址、导出 JSON | 读取以上 JSON；编辑不会自动回写 GitHub |
 
 实际发布流程：
 
 ```text
-K-Vault / R2 上传图片 → 得到 HTTPS 直链
+K-Vault / R2 / 视频存储上传图片或视频 → 得到可公开访问的直链
                          ↓
-             内容管理页面填写图片与提示词
+             内容管理页面填写图片、视频与提示词
                          ↓
            保存 → 复制完整 JSON（或下载 ZIP）
                          ↓
@@ -74,15 +76,16 @@ K-Vault / R2 上传图片 → 得到 HTTPS 直链
 
 ```text
 AIHUIHUA/                       ← GitHub 仓库根目录
-├── README.md                   ← 本使用手册（GitHub 首页显示）
+├── README.md                   ← 总使用与内容维护手册（GitHub 首页显示）
+├── MANAGE_GUIDE.md             ← 后台管理详细使用手册（含视频管理）
 ├── CONTENT_GUIDE.md            ← 辅助维护说明
 ├── index.html                  ← 首页、主导航、画廊/作品详情弹窗
 ├── style.css                   ← 前台排版、主题与弹窗样式
-├── site-shell.js               ← 首页/画廊/作品路由、瀑布流和弹窗逻辑
+├── site-shell.js               ← 首页/画廊/作品/视频路由、瀑布流和播放器逻辑
 ├── app.js                      ← 提示词图库加载、筛选、动态分类菜单
 ├── manage.html                 ← 内容管理页面结构
 ├── manage.css                  ← 内容管理页面样式
-├── manage.js                   ← 分类/图片编辑、图床替换、JSON 导出
+├── manage.js                   ← 分类/图片/视频编辑、图床替换、JSON 导出
 ├── zip.js                      ← ZIP 下载功能
 ├── sw.js                       ← 网站离线缓存与更新
 ├── poses.json                  ← 原有「姿势」数据
@@ -101,6 +104,7 @@ AIHUIHUA/                       ← GitHub 仓库根目录
     ├── categories.json         ← 提示词菜单 + 画廊/作品分类 R18 规则
     ├── gallery.json            ← 独立「画廊」页面的图片数据
     ├── works.json              ← 独立「作品」页面的图片数据
+    ├── video-assets.json       ← 独立「视频」页面的视频数据
     ├── inspiration.json        ← 已有「场景灵感·示例」子图库
     ├── furniture.json          ← 已有「家具参考·示例」子图库
     └── composition.json        ← 示例：以后新增的「摄影构图」数据文件
@@ -122,6 +126,8 @@ AIHUIHUA/                       ← GitHub 仓库根目录
 | --- | --- | --- |
 | 画廊增加一张图片 | `gallery/gallery.json` | 否 |
 | 作品增加一张图片 | `gallery/works.json` | 否 |
+| 视频增加一条记录 | `gallery/video-assets.json` | 否 |
+| 视频分类按钮 | 视频记录的 `subcategory`，前台自动生成 | 否 |
 | 画廊增加「艺术」「人物写真」筛选 | `gallery/categories.json` 的 `collectionFilters.gallery`，图片 `subcategory` 选择对应名称 | 否 |
 | 作品增加「电影感」筛选 | `gallery/categories.json` 的 `collectionFilters.works`，图片 `subcategory` 选择对应名称 | 否 |
 | 画廊/作品增加 TAG（不会增加菜单） | 图片记录的 `tags` 数组 | 否 |
@@ -146,7 +152,7 @@ AIHUIHUA/                       ← GitHub 仓库根目录
 | 管理标签 | 主要操作 |
 | --- | --- |
 | **01 分类配置** | 新建/调整自定义提示词菜单；**单独管理画廊/作品二级筛选菜单**、分类标题的 R18 |
-| **02 图片与提示词** | 选择图库、搜索、编辑图片直链与文字；画廊/作品的分类是下拉选择、TAG 只是说明；可直接复制单张或完整图库 JSON |
+| **02 图片、视频与提示词** | 选择画廊、作品、视频、自定义图库或原提示词图库；编辑图片 / 视频直链、封面和文字；可复制单条对象或完整 JSON |
 | **03 图床迁移** | 预览或批量替换旧域名/路径，也可用旧 URL → 新 URL 精确映射 |
 | **04 导出与部署** | 预览并**复制任意待发布 JSON 的完整内容**，直接在 GitHub 编辑；也可下载单个 JSON 或批量 ZIP |
 
@@ -322,7 +328,7 @@ GitHub 网页端通常可以在目标目录点击 `Add file → Upload files` �
 6. 进入「04 导出与部署」下载 ZIP。确保解压后包含 `gallery/categories.json` **和** `gallery/composition.json`。
 7. 将两个文件上传到 GitHub 对应位置并提交。刷新网站，在「提示词」区域查看新菜单。
 
-只有一级菜单、没有任何二级图库时，**一级菜单仍会在正式网站显示**。点击后会显示「暂无二级分类」，并可从菜单进入内容管理页面添加子分类。这样可以先规划「视频」「摄影技巧」等菜单，后期再逐步填充内容。
+只有一级菜单、没有任何二级图库时，**一级菜单仍会在正式网站显示**。点击后会显示「暂无二级分类」，并可从菜单进入内容管理页面添加子分类。这样可以先规划「摄影技巧」「镜头知识」等提示词菜单，后期再逐步填充内容。视频是独立主导航栏目，不需要在这里创建提示词菜单。
 
 ### 8.2 手动编辑 JSON 的方法
 
@@ -542,7 +548,7 @@ costumes/         ← 逐步迁移的服装参考
 
 ## 12. R18 开关：新内容如何标记
 
-顶部 R18 开关在首页、提示词、画廊、作品之间共用同一状态，默认关闭；当前浏览器会记住你的开关选择。
+顶部 R18 开关在首页、提示词、画廊、作品、视频之间共用同一状态，默认关闭；当前浏览器会记住你的开关选择。
 
 ### 12.1 图片 R18：单张图片自己控制
 
