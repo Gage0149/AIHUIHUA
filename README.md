@@ -5,7 +5,7 @@
 
 **常用入口：** [正式网站](https://gage0149.github.io/AIHUIHUA/) · [内容管理页面](https://gage0149.github.io/AIHUIHUA/manage.html) · [后台管理详细使用手册](MANAGE_GUIDE.md) · [GitHub 仓库](https://github.com/Gage0149/AIHUIHUA) · [详细维护说明](CONTENT_GUIDE.md)
 
-本项目基于开源 [PoseWear](https://github.com/atuizz/posewear) 改造。网页为纯静态 HTML/CSS/JavaScript；图片通过外部 HTTPS 链接加载，分类和提示词主要保存在 JSON 文件中。**不需要单独的服务器、数据库、Node.js 构建流程或后端部署。**
+本项目基于开源 [PoseWear](https://github.com/atuizz/posewear) 改造。网页为纯静态 HTML/CSS/JavaScript；图片和视频通过外部可访问的媒体直链加载，分类、提示词及媒体地址主要保存在 JSON 文件中。**不需要单独的服务器、数据库、Node.js 构建流程或后端部署。**
 
 ## 目录
 
@@ -68,7 +68,7 @@ K-Vault / R2 / 视频存储上传图片或视频 → 得到可公开访问的直
               正式网页读取新的 JSON 内容
 ```
 
-两个网页都部署在同一套 GitHub Pages 文件中；`manage.html` **不需要单独部署**。当前没有自动发布接口，也不要把 GitHub Token 写在公开网页中。
+正式网站和 `manage.html` 管理页面部署在同一套 GitHub Pages 文件中；管理页面**不需要单独部署**。当前没有自动发布接口，也不要把 GitHub Token 写在公开网页中。
 
 ## 3. 仓库文件结构与作用
 
@@ -777,9 +777,11 @@ GitHub 会保存提交历史。打开对应 JSON 文件的历史记录，找到�
 **制作内容：**
 
 - [ ] 图片已真实上传至自己的 K-Vault / R2，HTTPS 直链可以独立打开。
+- [ ] 视频已上传至可公开访问的存储空间，`video_url` 是视频文件直链而非分享网页，浏览器可以播放。
 - [ ] 新图片 `id` 不重复；标题、`subcategory`、提示词和 TAG 都已填写。
 - [ ] 新二级筛选菜单已先在 `collectionFilters` 登记；图片 tags 不会改变菜单。
-- [ ] 需要成人向过滤的图片已勾选 R18。
+- [ ] 需要成人向过滤的图片或视频已勾选 R18。
+- [ ] 视频分类填写在 `subcategory`，无需在画廊 / 作品筛选菜单重复配置。
 - [ ] 需要隐藏的 NSFW **分类标题**已在「分类配置」中单独标记；普通分类保持公开。
 - [ ] 新自定义一级/二级菜单已经关联正确的图库 JSON。
 - [ ] 多视角图片的缩略图、预览图、原图地址完整且对应正确。
@@ -795,7 +797,8 @@ GitHub 会保存提交历史。打开对应 JSON 文件的历史记录，找到�
 **发布后检查：**
 
 - [ ] GitHub Pages 部署完成；线上 JSON 内容确实是新版本。
-- [ ] 首页、提示词、画廊、作品能正常切换。
+- [ ] 首页、提示词、画廊、作品、视频能正常切换。
+- [ ] 视频封面、播放器、分类筛选和提示词展示正常。
 - [ ] 新分类/筛选按钮正常出现，图片可加载。
 - [ ] 长提示词弹窗的中/英文折叠、TAG、复制提示词正常。
 - [ ] R18 关闭/开启后内容显示符合预期。
