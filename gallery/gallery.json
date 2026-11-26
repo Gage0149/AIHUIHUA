@@ -41,5 +41,19 @@
     "写真",
     "复古"
   ]
+},
+{
+  "id": "new-00004",
+  "title": "日常手机抓拍人像。",
+  "subcategory": "艺术",
+  "image": "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU16YXdnTjNETTNndkZkMFFtZklRVEZXb1FXWDNNQUFyY0lBQUpuWlVoRUVXa0d2OUZwcDhBOUJBIiwiZSI6InBuZyIsIm4iOiJwYXN0ZV8xNzk1Njg5OTQ0MDE1XzEucG5nIiwibSI6ImltYWdlL3BuZyIsInMiOjI5MDM0MDIsInQiOjE3OTU2ODk5NDkyMTIsIm1pZCI6NTF9.4XucmEjaSKgFzLxVwKK-B5mmDF3UWBv-GaJ_cUxNZ14.png",
+  "prompt_zh": "在平凡无奇的室内空间中站立的年轻女性，用智能手机自然拍摄的抓拍照片。小巧的半身像和手掌般大小的脸庞，冷峻感的明亮白皙肌肤，非常纤细狭长的脸型，清晰的脸颊轮廓。自然垂落到肩部的长直发，无表情却带着微妙可爱的氛围。穿着细节精致的单色修身衬衫。\n\n构图故意显得有些笨拙，略微倾斜，焦点微妙地偏移，带来些许模糊感。低分辨率和清晰度，显眼智能手机特有的数字噪点和粗糙颗粒感。不均匀的室内照明，让脸部一侧明亮，另一侧则较暗。未经修饰的现实日常抓拍照片氛围。纵向构图的近距离拍摄。",
+  "prompt_en": "",
+  "adult": false,
+  "tags": [
+    "人像",
+    "写真",
+    "抓拍"
+  ]
 }
 ]
