@@ -150,8 +150,30 @@
     });
   }
   const collectionPaths = {gallery:'gallery/gallery.json',works:'gallery/works.json'};
+  const collectionKind = path => Object.keys(collectionPaths).find(view=>collectionPaths[view]===path);
   function filterRows(view) {
     return Array.isArray(config.collectionFilters?.[view]) ? config.collectionFilters[view] : [];
+  }
+  function refreshItemCategoryChoices(value='') {
+    const view=collectionKind(sourcePath),select=$('#itemCategorySelect');
+    if(!view)return;
+    select.replaceChildren();
+    const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='请选择已配置的二级分类';select.append(placeholder);
+    const names=new Set();
+    for(const row of filterRows(view)){
+      const name=String(row.name||'').trim();
+      if(!name||names.has(name))continue;
+      names.add(name);
+      const option=document.createElement('option');option.value=name;
+      option.textContent=name+(row.adult===true?' · 仅 R18 开启后显示':'');select.append(option);
+    }
+    if(value&&!names.has(value)){
+      const legacy=document.createElement('option');legacy.value=value;legacy.textContent=value+' · 未配置（不会出现筛选按钮）';select.append(legacy);
+    }
+    select.value=value||'';
+    $('#itemCategoryHelp').textContent=value&&!names.has(value)
+      ? '⚠ 这个分类尚未在「分类配置」中登记。图片仍可在「全部」中显示，但不会自动生成筛选按钮。'
+      : '这里只能选择已配置的分类。新增菜单请使用「01 分类配置」；图片 tags 不会创建任何菜单。';
   }
   function selectCollectionFilter(name='') {
     selectedCollectionFilter = name;
@@ -160,23 +182,25 @@
     $('#collectionFilterName').disabled=!!name;
     $('#collectionFilterAdult').checked=row?.adult===true;
     $('#resetCollectionFilter').disabled=!row;
+    $('#removeCollectionFilter').disabled=!row;
     renderCollectionFilterList();
   }
   async function renderCollectionFilterList() {
     const view=$('#collectionFilterView').value,list=$('#collectionFilterList');
     const records=new Map();
     for(const row of filterRows(view))if(row?.name?.trim())records.set(row.name.trim(),row.adult===true);
+    const unconfigured=[];
     try{
       const source=await loadSource(collectionPaths[view]);
       if(view!==$('#collectionFilterView').value)return;
       for(const item of source.items){
         const name=String(item.subcategory||item.category||'其他').trim();
-        if(name&&!records.has(name))records.set(name,false);
+        if(name&&name!=='未分类'&&!records.has(name)&&!unconfigured.includes(name))unconfigured.push(name);
       }
     }catch(error){toast('分类读取失败：'+error.message);}
     if(view!==$('#collectionFilterView').value)return;
     list.replaceChildren();
-    if(!records.size){list.textContent='暂无分类。可以新建分类规则，或先添加一张图片。';return;}
+    if(!records.size)list.textContent='暂无已配置分类。点击右侧「新建」添加第一项。';
     for(const [name,adult] of records){
       const button=document.createElement('button');button.type='button';
       button.className='collection-filter-choice'+(name===selectedCollectionFilter?' selected':'');
@@ -185,25 +209,49 @@
       status.className=adult?'adult-label':'public-label';
       button.append(label,status);button.onclick=()=>selectCollectionFilter(name);list.append(button);
     }
+    const notice=$('#collectionUnconfigured');notice.replaceChildren();notice.hidden=!unconfigured.length;
+    if(unconfigured.length){
+      const hint=document.createElement('p');hint.textContent='以下名称已出现在图片的 subcategory 中，但没有配置菜单。它们不会自动成为筛选按钮：';notice.append(hint);
+      const actions=document.createElement('div');actions.className='unconfigured-buttons';
+      for(const name of unconfigured){
+        const button=document.createElement('button');button.type='button';button.textContent='+ 登记 '+name;
+        button.onclick=()=>{selectCollectionFilter('');safeSelect('#collectionFilterName',name);$('#collectionFilterName').focus();};actions.append(button);
+      }
+      notice.append(actions);
+    }
   }
   function saveCollectionFilter(event) {
     event.preventDefault();
     const view=$('#collectionFilterView').value,name=$('#collectionFilterName').value.trim();
     if(!name)return toast('请填写二级分类名称');
+    if(name==='全部')return toast('「全部」是系统保留选项，请换一个分类名');
     const rows=filterRows(view),adult=$('#collectionFilterAdult').checked;
     const existing=rows.find(row=>row.name===name);
     if(existing)existing.adult=adult;
     else rows.push({name,adult});
     config.collectionFilters[view]=rows;
     markDirty(configPath);selectCollectionFilter(name);
+    if(collectionKind(sourcePath)===view&&draft)refreshItemCategoryChoices($('#itemCategorySelect').value);
     toast('分类可见性规则已保存；请导出 categories.json 并提交 GitHub');
   }
   function resetCollectionFilter() {
     const view=$('#collectionFilterView').value,name=selectedCollectionFilter;
     if(!name)return;
+    const row=filterRows(view).find(item=>item.name===name);
+    if(!row)return;
+    row.adult=false;
+    markDirty(configPath);selectCollectionFilter(name);
+    if(collectionKind(sourcePath)===view&&draft)refreshItemCategoryChoices($('#itemCategorySelect').value);
+    toast('该分类已设为普通分类；R18 关闭时也会显示按钮');
+  }
+  function removeCollectionFilter() {
+    const view=$('#collectionFilterView').value,name=selectedCollectionFilter;
+    if(!name)return;
+    if(!confirm(`从「${view==='gallery'?'画廊':'作品'}」筛选菜单中移除「${name}」？图片不会删除，但该分类按钮将不再显示。`))return;
     config.collectionFilters[view]=filterRows(view).filter(row=>row.name!==name);
     markDirty(configPath);selectCollectionFilter('');
-    toast('已恢复默认规则；该分类如果有图片，将始终显示');
+    if(collectionKind(sourcePath)===view&&draft)refreshItemCategoryChoices($('#itemCategorySelect').value);
+    toast('分类按钮已移除；已有图片仍可在「全部」中查看');
   }
   function selectCategory(index) {
     selectedCategory=index;const c=config.categories[index]||{};
@@ -299,7 +347,7 @@
     const info=descriptor(sourcePath);if(!info||info.kind==='builtin')return toast('原始图库建议只编辑已有内容；新增素材请使用自定义图库');
     const items=states.get(sourcePath)?.items||[];
     const id='new-'+Date.now();
-    draft=duplicate&&draft?clone(draft):{id,title:'新图片',subcategory:'未分类',image:'',prompt_zh:'',prompt_en:'',adult:false,tags:[]};
+    draft=duplicate&&draft?clone(draft):{id,title:'新图片',subcategory:collectionKind(sourcePath)?'':'未分类',image:'',prompt_zh:'',prompt_en:'',adult:false,tags:[]};
     draft.id=id;draftNew=true;selectedIndex=-1;formDirty=true;
     renderItems();renderEditor();
   }
@@ -354,6 +402,7 @@
     const hasItem=!!draft,info=descriptor(sourcePath);
     $('#itemForm').hidden=!hasItem;$('#emptyEditor').hidden=hasItem;
     $('#deleteItem').disabled=!hasItem||draftNew||info?.kind==='builtin';
+    $('#copyCurrentItem').disabled=!hasItem;
     setText('#editTitle',!hasItem?'选择一条内容开始编辑':draftNew?'新增图片':itemLabel(draft));
     if(!hasItem)return;
     const keys=valuesFor(draft,info);
@@ -362,7 +411,13 @@
     $('#itemTitle').disabled=!keys.titleKey;
     safeSelect('#itemTitle',keys.titleKey?draft[keys.titleKey]:'');
     $('#titleLabel').firstChild.textContent=keys.titleKey?'图片标题':'图片标题（使用中文描述）';
+    const collection=!!collectionKind(sourcePath);
+    $('#itemCategoryTextWrap').hidden=collection;
+    $('#itemCategorySelectWrap').hidden=!collection;
+    $('#itemCategoryActions').hidden=!collection;
     safeSelect('#itemCategory',draft[keys.categoryKey]||'');
+    if(collection)refreshItemCategoryChoices(String(draft[keys.categoryKey]||'').trim());
+    else $('#itemCategoryHelp').textContent='这是提示词图库的数据分类。画廊和作品的筛选菜单另在「01 分类配置」管理；tags 不会变成菜单。';
     safeSelect('#itemZh',draft[keys.zhKey]||'');safeSelect('#itemEn',draft[keys.enKey]||'');
     safeSelect('#itemDescription',draft.description||'');safeSelect('#itemTags',Array.isArray(draft.tags)?draft.tags.join(', '):'');
     $('#itemAdult').checked=!!(draft.a||draft.adult===true||draft.r18===true||draft.nsfw===true);
@@ -377,7 +432,10 @@
     if(source.items.some((item,i)=>item.id===id && (draftNew||i!==selectedIndex)))return toast('此素材 ID 已存在，请换一个');
     draft.id=id;
     if(keys.titleKey)draft[keys.titleKey]=$('#itemTitle').value.trim();
-    draft[keys.categoryKey]=$('#itemCategory').value.trim();
+    const collection=!!collectionKind(sourcePath);
+    const category=collection?$('#itemCategorySelect').value.trim():$('#itemCategory').value.trim();
+    if(collection&&!category)return toast('请先选择二级分类。如需新分类，请先到「01 分类配置」创建。');
+    draft[keys.categoryKey]=category;
     draft[keys.zhKey]=$('#itemZh').value.trim();draft[keys.enKey]=$('#itemEn').value.trim();
     if('description'in draft||$('#itemDescription').value.trim())draft.description=$('#itemDescription').value.trim();
     if('tags'in draft||$('#itemTags').value.trim())draft.tags=$('#itemTags').value.split(/[,，]/).map(s=>s.trim()).filter(Boolean);
@@ -395,7 +453,8 @@
     }
     markDirty(sourcePath);formDirty=false;
     draft=clone(source.items[selectedIndex]);renderItems();renderCategories();renderEditor();
-    toast('条目已保存到编辑会话；请在「导出与部署」下载修改');
+    if(collection)renderCollectionFilterList();
+    toast('图片已保存到本次编辑会话；可以直接复制完整图库 JSON 发布');
   }
   function applyRaw(){
     try{const value=JSON.parse($('#itemRaw').value);
@@ -413,6 +472,7 @@
       const category=config.categories.find(c=>cleanPath(c.file)===sourcePath);
       if(category){category.count=source.items.length;markDirty(configPath);renderCategories();}
     }
+    if(collectionKind(sourcePath))renderCollectionFilterList();
   }
   function transformImages(items,transform,apply=false){
     let changed=0;
@@ -472,10 +532,81 @@
     for(const [host,count] of [...domains].sort((a,b)=>b[1]-a[1]))lines.push(`${host}：${count} 个图片地址`);
     setText('#migrationReport',lines.filter(Boolean).join('\n'));
   }
+  async function copyText(text,success){
+    try{
+      if(!navigator.clipboard?.writeText)throw Error('剪贴板 API 不可用');
+      await navigator.clipboard.writeText(text);
+    }catch{
+      // GitHub Pages 为 HTTPS，正常会使用上方 Clipboard API；不支持时尝试浏览器兼容方案。
+      const field=document.createElement('textarea');field.value=text;field.style.cssText='position:fixed;left:-9999px;top:0;opacity:0';
+      document.body.append(field);field.focus();field.select();
+      const copied=document.execCommand('copy');field.remove();
+      if(!copied)throw Error('浏览器拒绝访问剪贴板，请在下方 JSON 预览框手动全选复制');
+    }
+    toast(success);
+  }
+  async function copyCurrentItem(){
+    if(!draft)return toast('请先在左侧选择图片');
+    if(formDirty||draftNew)return toast('请先点击「保存当前条目」，再复制 JSON');
+    try{await copyText(JSON.stringify(draft,null,2)+'\n','已复制当前图片的 JSON 对象；追加到数组时记得用英文逗号分隔');}
+    catch(error){toast(error.message);}
+  }
+  async function copyCurrentSource(){
+    if(formDirty)return toast('请先保存当前条目，再复制完整图库 JSON');
+    try{
+      await loadSource(sourcePath);
+      await copyText(fileText(sourcePath),'已复制 '+sourcePath+' 的完整 JSON，可以粘贴到 GitHub 同名文件');
+    }catch(error){toast('复制失败：'+error.message);}
+  }
+  function refreshCopyFileOptions(preferred=''){
+    const select=$('#copyFileSelect'),before=preferred||select.value;
+    const paths=[configPath,'gallery/gallery.json','gallery/works.json',sourcePath,...dirtyPaths()];
+    const unique=[...new Set(paths)];select.replaceChildren();
+    for(const path of unique){
+      const option=document.createElement('option');option.value=path;
+      const title=path===configPath?'分类配置':descriptor(path)?.name||path.split('/').pop();
+      option.textContent=(dirtyPaths().includes(path)?'● 待发布 · ':'')+title+' — '+path;
+      select.append(option);
+    }
+    select.value=unique.includes(before)?before:sourcePath;
+  }
+  async function renderJsonPreview(){
+    const path=$('#copyFileSelect').value;
+    if(!path)return;
+    const preview=$('#jsonPreview');preview.value='正在读取 '+path+' …';
+    try{
+      if(path!==configPath)await loadSource(path);
+      if($('#copyFileSelect').value!==path)return;
+      const content=fileText(path),limit=14000;
+      preview.value=content.length>limit?content.slice(0,limit):content;
+      $('#jsonPreviewNote').textContent=content.length>limit
+        ?`预览只展示前 ${limit.toLocaleString()} 个字符（完整文件共 ${content.length.toLocaleString()} 个字符）。复制按钮始终复制全部内容。`
+        :`完整预览 · ${content.length.toLocaleString()} 个字符`;
+      const isNew=states.get(path)?.isNew;
+      $('#copyFileNote').textContent=isNew
+        ?`这是新建文件：${path}。请先在 GitHub 的对应目录创建同名文件，再粘贴完整 JSON。`
+        :`目标文件：${path}。请在 GitHub 同名文件中全选旧内容、粘贴完整 JSON 并提交。`;
+      const link=$('#githubEditFile');
+      link.href=isNew?'https://github.com/Gage0149/AIHUIHUA/tree/main/gallery':'https://github.com/Gage0149/AIHUIHUA/edit/main/'+path;
+      link.textContent=isNew?'在 GitHub 创建新文件 ↗':'在 GitHub 编辑此文件 ↗';
+    }catch(error){
+      if($('#copyFileSelect').value!==path)return;
+      preview.value='';$('#jsonPreviewNote').textContent='读取失败：'+error.message;
+    }
+  }
+  async function copySelectedFile(){
+    if(formDirty)return toast('当前图片的编辑尚未保存，请先点「保存当前条目」');
+    const path=$('#copyFileSelect').value;
+    try{
+      validateExport();
+      if(path!==configPath)await loadSource(path);
+      await copyText(fileText(path),'已复制 '+path+' 的全部 JSON，请在 GitHub 同名文件里粘贴并提交');
+    }catch(error){toast('复制失败：'+error.message);}
+  }
   async function exportCurrent(){
     if(formDirty)return toast('请先保存当前条目，再导出数据');
     try{
-      const current=$('#sourceSelect').value;await loadSource(current);
+      const current=$('#copyFileSelect').value;if(current!==configPath)await loadSource(current);
       download(new Blob([fileText(current)],{type:'application/json;charset=utf-8'}),current.split('/').pop());
     }catch(error){toast(error.message);}
   }
@@ -518,29 +649,55 @@
     }catch(error){toast(error.message);}
   }
   function download(blob,name){const link=document.createElement('a');const url=URL.createObjectURL(blob);link.href=url;link.download=name;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);}
+  function activatePanel(key){
+    for(const tab of $$('.manage-tabs button')){
+      const active=tab.dataset.panel===key;
+      tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active));
+    }
+    for(const panel of $$('.workspace'))panel.hidden=panel.id!=='panel-'+key;
+    if(key==='export'){
+      updateDirty();refreshCopyFileOptions(dirtyPaths()[0]||sourcePath);renderJsonPreview();
+    }
+    if(key==='migration')sourceForMigration().then(result=>result&&reportMigration(result.source));
+  }
+  async function quickNew(path){
+    if(!await changeSource(path))return;
+    activatePanel('content');newItem();
+    $('#itemTitle').focus();
+  }
   function bind(){
-    $$('.manage-tabs button').forEach(button=>button.onclick=()=>{
-      const key=button.dataset.panel;
-      for(const tab of $$('.manage-tabs button')){tab.classList.toggle('active',tab===button);tab.setAttribute('aria-selected',String(tab===button));}
-      for(const panel of $$('.workspace'))panel.hidden=panel.id!=='panel-'+key;
-      if(key==='export')updateDirty();
-      if(key==='migration')sourceForMigration().then(result=>result&&reportMigration(result.source));
-    });
+    $$('.manage-tabs button').forEach(button=>button.onclick=()=>activatePanel(button.dataset.panel));
+    $('#quickGallery').onclick=()=>quickNew('gallery/gallery.json');
+    $('#quickWorks').onclick=()=>quickNew('gallery/works.json');
+    $('#quickCategories').onclick=()=>{
+      $('#collectionFilterView').value=collectionKind(sourcePath)||'gallery';selectCollectionFilter('');activatePanel('categories');
+      $('.collection-visibility-section').scrollIntoView({behavior:'smooth',block:'start'});
+    };
+    $('#quickPublish').onclick=()=>activatePanel('export');
     $('#newGroup').onclick=()=>selectGroup(-1);$('#groupForm').onsubmit=saveGroup;
     $('#newCategory').onclick=()=>selectCategory(-1);$('#categoryForm').onsubmit=saveCategory;
     $('#collectionFilterView').onchange=()=>selectCollectionFilter('');
     $('#newCollectionFilter').onclick=()=>selectCollectionFilter('');
     $('#collectionFilterForm').onsubmit=saveCollectionFilter;
     $('#resetCollectionFilter').onclick=resetCollectionFilter;
+    $('#removeCollectionFilter').onclick=removeCollectionFilter;
     $('#sourceSelect').onchange=event=>changeSource(event.target.value);
     $('#itemSearch').oninput=renderItems;
     $('#newItem').onclick=()=>newItem(false);$('#duplicateItem').onclick=()=>newItem(true);
     $('#itemForm').onsubmit=saveItem;$('#deleteItem').onclick=deleteItem;$('#applyRaw').onclick=applyRaw;
+    $('#copyCurrentItem').onclick=copyCurrentItem;$('#copyCurrentSource').onclick=copyCurrentSource;
     for(const input of ['#itemId','#itemTitle','#itemCategory','#itemZh','#itemEn','#itemDescription','#itemTags','#itemAdult'])
       $(input).addEventListener('input',()=>{formDirty=true;});
+    $('#itemCategorySelect').onchange=()=>{formDirty=true;refreshItemCategoryChoices($('#itemCategorySelect').value);};
+    $('#goCategoryConfig').onclick=()=>{
+      const view=collectionKind(sourcePath)||'gallery';
+      $('#collectionFilterView').value=view;selectCollectionFilter('');activatePanel('categories');
+      $('.collection-visibility-section').scrollIntoView({behavior:'smooth',block:'start'});
+    };
     $('#migrationSource').onchange=async()=>{const result=await sourceForMigration();if(result)reportMigration(result.source);};
     $('#previewPrefix').onclick=()=>previewPrefix(false);$('#applyPrefix').onclick=()=>previewPrefix(true);
     $('#applyMapping').onclick=applyMapping;$('#exportAll').onclick=exportAll;$('#exportCurrent').onclick=exportCurrent;
+    $('#copyFileSelect').onchange=renderJsonPreview;$('#copySelectedFile').onclick=copySelectedFile;
     window.addEventListener('beforeunload',event=>{if(dirtyPaths().length||formDirty){event.preventDefault();event.returnValue='';}});
   }
   async function initialize(){
@@ -552,6 +709,7 @@
         collectionFilters:{...(result.collectionFilters||{}),gallery:Array.isArray(result.collectionFilters?.gallery)?result.collectionFilters.gallery:[],works:Array.isArray(result.collectionFilters?.works)?result.collectionFilters.works:[]}};
       refreshGroupChoices();renderGroups();renderCategories();selectGroup(-1);selectCategory(-1);
       refreshSourceOptions();await changeSource(sourcePath);await renderCollectionFilterList();updateDirty();
+      refreshCopyFileOptions(sourcePath);
     }catch(error){toast('读取分类配置失败：'+error.message);setText('#sourceStatus',error.message);}
   }
   document.addEventListener('DOMContentLoaded',initialize);

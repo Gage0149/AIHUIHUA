@@ -8,7 +8,8 @@
     gallery: {path:'gallery/gallery.json', items:null, pending:null, error:null, filter:'全部', visible:[]},
     works: {path:'gallery/works.json', items:null, pending:null, error:null, filter:'全部', visible:[]}
   };
-  // 二级分类的 R18 与图片本身的 R18 完全独立。未单独配置的分类默认公开。
+  // 菜单分类只来自 categories.json 的 collectionFilters；图片的 subcategory 和 tags 均不会自动新增菜单。
+  // 分类 R18 与图片 R18 完全独立，图片未配置成人标记时默认公开。
   const collectionFilters = {gallery:[],works:[]};
   let collectionFiltersPending;
   function loadCollectionFilters() {
@@ -24,6 +25,7 @@
   }
   // 画廊、作品共用顶部 R18 状态；未标记的素材默认公开。
   const isAdultItem = item => !!item && (item.adult === true || item.r18 === true || item.nsfw === true);
+  const itemCategory = item => String(item?.subcategory || item?.category || '未分类').trim() || '未分类';
   let selectedItem = null;
   const safeURL = value => {
     try {
@@ -94,11 +96,7 @@
       const name = rule.name.trim();
       if (!categoryRules.has(name)) categoryRules.set(name, rule.adult === true);
     }
-    // 从全部图片（包括当前被 R18 隐藏的图片）补全分类，不再从 available 推断分类是否可见。
-    for (const item of items) {
-      const name = item.subcategory || item.category || '其他';
-      if (!categoryRules.has(name)) categoryRules.set(name, false);
-    }
+    // 即使当前分类下没有可见图片，分类按钮仍受自己的配置控制；图片和标签无法修改按钮集合。
     const categories = [...categoryRules].filter(([,adult]) => adultAllowed || !adult).map(([name]) => name);
     if (state.filter !== '全部' && !categories.includes(state.filter)) state.filter = '全部';
     filters.replaceChildren();
@@ -113,7 +111,7 @@
     }
     const query = ($('#q')?.value || '').trim().toLowerCase();
     state.visible = available.filter(item => {
-      const category = item.subcategory || item.category || '其他';
+      const category = itemCategory(item);
       const tags = Array.isArray(item.tags) ? item.tags : [];
       const terms = [item.title, category, item.description, item.prompt_zh, item.prompt_en, ...tags].join(' ').toLowerCase();
       return (state.filter === '全部' || state.filter === category) && (!query || terms.includes(query));
@@ -149,7 +147,7 @@
       visual.append(error);
       if (item.demo) visual.append(element('span', 'masonry-demo', '示例 · 可替换'));
       const caption = element('span', 'masonry-caption');
-      caption.append(element('span', 'masonry-cat', item.subcategory || item.category || '其他'));
+      caption.append(element('span', 'masonry-cat', itemCategory(item)));
       caption.append(element('strong', '', title));
       const excerpt = item.prompt_zh || item.prompt_en || item.description;
       if (excerpt) caption.append(element('span', 'masonry-description', excerpt));
@@ -223,7 +221,7 @@
     image.src = url;
     image.alt = item.title || '图片';
     $('#collectionDialogImageFallback').hidden = !!url;
-    $('#collectionDialogCategory').textContent = item.subcategory || item.category || '视觉灵感';
+    $('#collectionDialogCategory').textContent = itemCategory(item);
     $('#collectionDialogTitle').textContent = item.title || '未命名作品';
     $('#collectionDialogDescription').textContent = item.description || '';
     resetPromptPanel(promptPanels[0], item.prompt_zh);
