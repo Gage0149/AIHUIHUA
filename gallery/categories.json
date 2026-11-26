@@ -1,4 +1,10 @@
 {
+  "groups": [
+    {
+      "id": "video",
+      "name": "视频"
+    }
+  ],
   "collectionFilters": {
     "gallery": [
       {
@@ -45,12 +51,6 @@
         "风景摄影",
         "AI插画"
       ]
-    },
-      "groups": [
-    {
-      "id": "video",
-      "name": "视频"
     }
-  ],
   ]
 }
