@@ -321,6 +321,33 @@
   window.addEventListener('resize', () => {
     if ($('#collectionDialog').open) requestAnimationFrame(updatePromptOverflow);
   });
+  function renderReferenceImages(value) {
+    const wrap = $('#collectionDialogReferencesWrap');
+    const grid = $('#collectionDialogReferences');
+    grid.replaceChildren();
+    const entries = Array.isArray(value) ? value : typeof value === 'string' ? [value] : [];
+    const urls = entries.map(entry => typeof entry === 'string' ? entry : entry?.url || '').map(safeURL).filter(Boolean);
+    wrap.hidden = !urls.length;
+    $('#collectionDialogReferenceCount').textContent = urls.length ? `${urls.length} 张` : '';
+    urls.forEach((url, index) => {
+      const link = element('a', 'collection-reference-card');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.setAttribute('aria-label', `在新标签页查看参考图 ${index + 1}`);
+      const image = document.createElement('img');
+      image.src = url;
+      image.alt = `参考图 ${index + 1}`;
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      image.referrerPolicy = 'no-referrer';
+      const fallback = element('span', 'collection-reference-fallback', '图片无法加载');
+      fallback.hidden = true;
+      image.onerror = () => { image.hidden = true; fallback.hidden = false; };
+      link.append(image, fallback, element('span', 'collection-reference-caption', `参考图 ${String(index + 1).padStart(2, '0')}`));
+      grid.append(link);
+    });
+  }
   function openCard(item) {
     if (isAdultItem(item) && !document.body.classList.contains('adult')) return;
     selectedItem = item;
@@ -336,6 +363,7 @@
     $('#collectionDialogDescription').textContent = item.description || '';
     resetPromptPanel(promptPanels[0], item.prompt_zh);
     resetPromptPanel(promptPanels[1], item.prompt_en);
+    renderReferenceImages(item.reference_images);
     $('#collectionDialogTags').replaceChildren();
     const tags = Array.isArray(item.tags) ? item.tags : [];
     $('#collectionDialogTagsWrap').hidden = !tags.length;
