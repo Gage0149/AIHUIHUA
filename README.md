@@ -126,6 +126,7 @@ AIHUIHUA/                       ← GitHub 仓库根目录
 | --- | --- | --- |
 | 画廊增加一张图片 | `gallery/gallery.json` | 否 |
 | 作品增加一张图片 | `gallery/works.json` | 否 |
+| 为画廊 / 作品添加参考图 | 每条记录的 `reference_images` 数组；后台每行填写一个直链 | 否 |
 | 视频增加一条记录 | `gallery/video-assets.json` | 否 |
 | 视频分类按钮 | 视频记录的 `subcategory`，前台自动生成 | 否 |
 | 画廊增加「艺术」「人物写真」筛选 | `gallery/categories.json` 的 `collectionFilters.gallery`，图片 `subcategory` 选择对应名称 | 否 |
