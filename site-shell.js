@@ -1,12 +1,13 @@
 'use strict';
-/* 自定义主页、提示词、画廊、作品四大页面；相对路径适配 GitHub Pages。 */
+/* 自定义主页、提示词、画廊、作品、视频五大页面；相对路径适配 GitHub Pages。 */
 (() => {
   const $ = selector => document.querySelector(selector);
   const base = new URL('.', document.currentScript?.src || location.href);
   const siteFile = path => new URL(String(path).replace(/^\/+/, ''), base).href;
   const datasets = {
     gallery: {path:'gallery/gallery.json', items:null, pending:null, error:null, filter:'全部', visible:[]},
-    works: {path:'gallery/works.json', items:null, pending:null, error:null, filter:'全部', visible:[]}
+    works: {path:'gallery/works.json', items:null, pending:null, error:null, filter:'全部', visible:[]},
+    video: {path:'gallery/video-assets.json', items:null, pending:null, error:null, filter:'全部', visible:[]}
   };
   // 菜单分类只来自 categories.json 的 collectionFilters；图片的 subcategory 和 tags 均不会自动新增菜单。
   // 分类 R18 与图片 R18 完全独立，图片未配置成人标记时默认公开。
@@ -38,6 +39,7 @@
     if (!section || section === 'home') return 'home';
     if (section === 'gallery' || section === 'custom-gallery') return 'gallery';
     if (section === 'works') return 'works';
+    if (section === 'video') return 'video';
     return 'prompts';
   };
   function sync() {
@@ -52,6 +54,7 @@
     if (view === 'home') document.title = '绘影 · AI 摄影与视觉叙事';
     if (view === 'gallery') { document.title = '画廊 · 绘影'; load('gallery'); }
     if (view === 'works') { document.title = '作品 · 绘影'; load('works'); }
+    if (view === 'video') { document.title = '视频 · 绘影'; load('video'); }
   }
   async function load(view) {
     const state = datasets[view];
@@ -82,7 +85,114 @@
     if (content !== undefined) node.textContent = String(content);
     return node;
   }
+  function renderVideoCollection() {
+    const state = datasets.video;
+    const grid = $('#videoMasonry');
+    const filters = $('#videoFilters');
+    const empty = $('#videoEmpty');
+    if (!state || !grid || !filters || !empty) return;
+
+    const items = state.items || [];
+    const adultAllowed = document.body.classList.contains('adult');
+    const available = adultAllowed ? items : items.filter(item => !isAdultItem(item));
+    const adultHidden = items.length - available.length;
+    const categories = [...new Set(available.map(itemCategory).filter(name => name && name !== '未分类'))];
+    if (state.filter !== '全部' && !categories.includes(state.filter)) state.filter = '全部';
+
+    filters.replaceChildren();
+    if (categories.length) {
+      ['全部', ...categories].forEach(category => {
+        const chip = element('button', category === state.filter ? 'active' : '', category);
+        chip.type = 'button';
+        chip.setAttribute('aria-pressed', String(category === state.filter));
+        chip.onclick = () => { state.filter = category; renderVideoCollection(); };
+        filters.append(chip);
+      });
+    }
+
+    const query = ($('#q')?.value || '').trim().toLowerCase();
+    state.visible = available.filter(item => {
+      const tags = Array.isArray(item.tags) ? item.tags : [];
+      const terms = [item.title, itemCategory(item), item.description, item.prompt_zh, item.prompt_en, ...tags].join(' ').toLowerCase();
+      return (state.filter === '全部' || itemCategory(item) === state.filter) && (!query || terms.includes(query));
+    });
+
+    $('#videoCount').textContent = state.visible.length + ' 个视频' + (adultHidden ? ' · ' + adultHidden + ' 个 R18 已隐藏' : '');
+    grid.replaceChildren();
+
+    state.visible.forEach(item => {
+      const title = item.title || '未命名视频';
+      const card = element('article', 'masonry-card video-card');
+      const visual = element('div', 'masonry-visual video-visual');
+      const rawVideo = item.video_url || item.video || item.src || '';
+      const videoUrl = rawVideo ? safeURL(rawVideo) : '';
+      const rawPoster = item.thumbnail || item.cover || item.image || '';
+      const posterUrl = rawPoster ? safeURL(rawPoster) : '';
+
+      if (videoUrl) {
+        const player = document.createElement('video');
+        player.controls = true;
+        player.preload = 'metadata';
+        player.playsInline = true;
+        player.src = videoUrl;
+        player.setAttribute('aria-label', title);
+        if (posterUrl) player.poster = posterUrl;
+        const fallback = element('span', 'masonry-image-error', '视频无法播放，请检查视频直链是否可访问');
+        fallback.hidden = true;
+        player.onerror = () => { player.hidden = true; fallback.hidden = false; };
+        visual.append(player, fallback);
+      } else if (posterUrl) {
+        const image = element('img');
+        image.src = posterUrl;
+        image.alt = title;
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.referrerPolicy = 'no-referrer';
+        visual.append(image, element('span', 'video-missing-source', '尚未填写视频地址'));
+      } else {
+        visual.append(element('span', 'masonry-image-error', '请为这条视频填写 video_url 和封面地址'));
+      }
+
+      if (item.demo) visual.append(element('span', 'masonry-demo', '示例 · 可替换'));
+      const caption = element('span', 'masonry-caption');
+      caption.append(element('span', 'masonry-cat', itemCategory(item)));
+      caption.append(element('strong', '', title));
+      if (item.description) caption.append(element('span', 'masonry-description', item.description));
+      card.append(visual, caption);
+
+      const prompt = item.prompt_zh || item.prompt_en;
+      if (prompt) {
+        const details = element('details', 'video-prompt');
+        details.append(element('summary', '', '查看视频提示词'));
+        details.append(element('p', '', prompt));
+        card.append(details);
+      }
+      grid.append(card);
+    });
+
+    empty.hidden = state.visible.length > 0;
+    if (!state.visible.length) {
+      empty.replaceChildren();
+      if (state.error) {
+        empty.append(element('strong', '', '视频内容读取失败'));
+        empty.append(element('p', '', state.error + '；请检查 gallery/video-assets.json'));
+      } else if (items.length && adultHidden === items.length && !adultAllowed) {
+        empty.append(element('strong', '', '当前视频均被 R18 开关隐藏'));
+        empty.append(element('p', '', '如已年满 18 岁，可使用页面顶部 R18 开关查看。'));
+      } else if (items.length && query) {
+        empty.append(element('strong', '', '没有找到匹配的视频'));
+        empty.append(element('p', '', '试试其他搜索词，或清空顶部搜索框。'));
+      } else if (items.length) {
+        empty.append(element('strong', '', '这个分类暂时没有视频'));
+        empty.append(element('p', '', '切换到“全部”继续浏览。'));
+      } else {
+        empty.append(element('strong', '', '视频栏目已经准备好了'));
+        empty.append(element('p', '', '添加视频数据后，就会在这里展示。数据文件：gallery/video-assets.json。每条内容可填写 title、video_url（MP4/WebM 直链）、thumbnail、description、prompt_zh 和 tags。'));
+      }
+    }
+  }
   function render(view) {
+    if (view === 'video') { renderVideoCollection(); return; }
     const state = datasets[view];
     const grid = $('#' + view + 'Masonry');
     const filters = $('#' + view + 'Filters');
