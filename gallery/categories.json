@@ -9,6 +9,10 @@
       {
         "name": "性感",
         "adult": true
+      },
+     {
+        "name": "人像",
+        "adult": false
       }
     ],
     "works": []
