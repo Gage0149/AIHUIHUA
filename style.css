@@ -1472,6 +1472,19 @@ body[data-view="video"] #pageVideo{display:block}
 .masonry-column .masonry-visual.image-failed{min-height:180px}
 .masonry-column .masonry-image-error{min-height:180px}
 
+/* 画廊 / 作品详情弹窗中的参考图 */
+.collection-reference-section{margin-top:24px}
+.collection-reference-section[hidden]{display:none!important}
+.collection-reference-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
+.collection-reference-heading h3{margin:0!important}
+.collection-reference-heading>span{font-size:11px;color:var(--mu)}
+.collection-reference-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}
+.collection-reference-card{display:flex;min-width:0;flex-direction:column;gap:6px;color:var(--tx);text-decoration:none}
+.collection-reference-card img,.collection-reference-fallback{display:grid;width:100%;aspect-ratio:4/5;object-fit:contain;overflow:hidden;border:1px solid var(--line);border-radius:11px;background:var(--sf);transition:border-color .2s,transform .2s}
+.collection-reference-card:hover img{border-color:var(--ac);transform:translateY(-2px)}
+.collection-reference-fallback{place-items:center;padding:8px;color:var(--mu);font-size:11px;text-align:center}
+.collection-reference-fallback[hidden]{display:none!important}
+.collection-reference-caption{color:var(--mu);font-size:11px;text-align:center}
 /* 独立视频栏目 */
 .video-visual{min-height:0;aspect-ratio:16/9;background:#111}
 .video-visual video{display:block;width:100%;height:auto;max-height:520px;aspect-ratio:16/9;object-fit:contain;background:#111}
