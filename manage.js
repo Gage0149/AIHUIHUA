@@ -350,7 +350,10 @@
     const info=descriptor(sourcePath);if(!info||info.kind==='builtin')return toast('原始图库建议只编辑已有内容；新增素材请使用自定义图库');
     const items=states.get(sourcePath)?.items||[];
     const id='new-'+Date.now();
-    draft=duplicate&&draft?clone(draft):{id,title:'新图片',subcategory:collectionKind(sourcePath)?'':'未分类',image:'',prompt_zh:'',prompt_en:'',adult:false,tags:[]};
+    const fresh=info.kind==='video'
+      ? {id,title:'新视频',subcategory:'未分类',video_url:'',thumbnail:'',description:'',prompt_zh:'',prompt_en:'',adult:false,tags:[]}
+      : {id,title:'新图片',subcategory:collectionKind(sourcePath)?'':'未分类',image:'',prompt_zh:'',prompt_en:'',adult:false,tags:[]};
+    draft=duplicate&&draft?clone(draft):fresh;
     draft.id=id;draftNew=true;selectedIndex=-1;formDirty=true;
     renderItems();renderEditor();
   }
@@ -420,8 +423,12 @@
     $('#itemForm').hidden=!hasItem;$('#emptyEditor').hidden=hasItem;
     $('#deleteItem').disabled=!hasItem||draftNew||info?.kind==='builtin';
     $('#copyCurrentItem').disabled=!hasItem;
-    setText('#editTitle',!hasItem?'选择一条内容开始编辑':draftNew?'新增图片':itemLabel(draft));
-    if(!hasItem)return;
+    setText('#editTitle',!hasItem?'选择一条内容开始编辑':draftNew?(info?.kind==='video'?'新增视频':'新增图片'):itemLabel(draft));
+    if(!hasItem){
+      const player=$('#itemVideoPreview');if(!player.paused)player.pause();player.removeAttribute('src');player.load();player.hidden=true;
+      $('#itemPreview').hidden=true;$('#previewHint').hidden=false;
+      return;
+    }
     const keys=valuesFor(draft,info);
     const isVideo=info?.kind==='video';
     safeSelect('#itemId',draft.id||'');
@@ -448,6 +455,7 @@
     $('#itemCategoryActions').hidden=!collection;
     safeSelect('#itemCategory',draft[keys.categoryKey]||'');
     if(collection)refreshItemCategoryChoices(String(draft[keys.categoryKey]||'').trim());
+    else if(isVideo)$('#itemCategoryHelp').textContent='视频分类直接填写即可；前台会根据视频条目的分类自动生成筛选按钮，无需到「01 分类配置」重复创建。';
     else $('#itemCategoryHelp').textContent='这是提示词图库的数据分类。画廊和作品的筛选菜单另在「01 分类配置」管理；tags 不会变成菜单。';
     safeSelect('#itemZh',draft[keys.zhKey]||'');safeSelect('#itemEn',draft[keys.enKey]||'');
     safeSelect('#itemDescription',draft.description||'');safeSelect('#itemTags',Array.isArray(draft.tags)?draft.tags.join(', '):'');
