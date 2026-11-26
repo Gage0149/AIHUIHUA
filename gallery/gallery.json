@@ -1,7 +1,7 @@
 
 [
   {
-    "id": "new-0001",
+    "id": "new-00001",
     "title": "新中式极简艺术封面",
     "subcategory": "艺术",
     "image": "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU10YXdiQUlKWm5URTNGRS1PRVptSWFULTFqSnIwQUFuOE1BQUljd0RCRXJJVnJGOTlYb2VFOUJBIiwiZSI6InBuZyIsIm4iOiJwYXN0ZV8xNzk1NjA0NTA1MDA4XzEucG5nIiwibSI6ImltYWdlL3BuZyIsInMiOjI0MDk1NzMsInQiOjE3OTU2MDQ1MTI2NjYsIm1pZCI6NDV9.pzPy2NfBw-0J-M9Pm9bweF7SJQGOCQyTE6nMrSC1azI.png",
@@ -15,7 +15,7 @@
     ]
   },
     {
-    "id": "new-00001",
+    "id": "new-00002",
     "title": "性感女神",
     "subcategory": "性感",
     "image": "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU12YXdiSHdEYUYwYjFYUFNMdnkxU2pRX2s0UHdzQUFuOEhBQUljd0RoRVp0R0g2dUhMVHBZOUJBIiwiZSI6InBuZyIsIm4iOiJwYXN0ZV8xNzk1NjA2NDU0MDk5XzEucG5nIiwibSI6ImltYWdlL3BuZyIsInMiOjI2NTI3NDcsInQiOjE3OTU2MDY0NjQ2NzQsIm1pZCI6NDd9.cJdR4wBadvLZYmWqiNZGfZ4vSTwnw07_DYDSdHrEs44.png",
@@ -27,5 +27,19 @@
       "写真",
       "性感"
     ]
-  }
+  },
+  {
+  "id": "new-00003",
+  "title": "Instagram 风格的复古人物照片",
+  "subcategory": "人像",
+  "image": "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU14YXdnTWJKWjB3bXNOU1NYbkEzLWZXRGNjYmNBQUFyVUlBQUpuWlVoRWQ3d1g0aHdNQVI0OUJBIiwiZSI6InBuZyIsIm4iOiJwYXN0ZV8xNzk1Njg5NTc1MzM0XzEucG5nIiwibSI6ImltYWdlL3BuZyIsInMiOjI1OTI3MDAsInQiOjE3OTU2ODk1ODEyNzIsIm1pZCI6NDl9.mhMyTZJe2Ep530ACKY81NjbasefcVM-rxdeO9regT4s.png",
+  "prompt_zh": "基于日本 Instagram 风格的复古人物照片。整体采用低饱和度的冷色调，应用低分辨率和强烈的数字颗粒效果，营造出仿佛用老旧智能手机拍摄的粗糙而自然的照片质感。\n\n20 岁出头的日俄混血女性 coser。自然垂至肩下的雪白长直发，明亮而干净的肌肤，精致而富有魅力的脸部轮廓。她穿着贴合身体的红色高领短袖修身内搭 T 恤，修长而匀称的身材格外突出。\n\n在冷峻而高傲的氛围中，带着一丝奇妙的可爱魅力。略带朦胧却又吸引人的眼神，微微下垂的眼睑，微微张开的嘴唇。凝视镜头的目光中流露出从容而自信的气息。\n\n修长纤细的手指以自然姿态展现，手部的细腻形态和柔和动作为照片增添魅力。不夸张的自然姿势，以及看似未经修饰的表情。\n\n脸部应用轻微过曝效果，使肌肤呈现柔软而白皙的质感，尤其是眼周添加了柔和而梦幻的模糊效果。整体融合低对比度、冷色温、低饱和度、粗糙的数字噪点、细微的焦点模糊以及自然的眩光效果。\n\n日本风格的低画质智能手机自拍风格，复古数码相机特有的不完美质感，自然的肌肤表现，冷峻而神秘却又可爱的氛围。没有过度的肌肤修饰或人为的锐度，仿佛真实日常中拍摄的写实抓拍照片。没有文字，没有水印",
+  "prompt_en": "",
+  "adult": false,
+  "tags": [
+    "人像",
+    "写真",
+    "复古"
+  ]
+}
 ]
