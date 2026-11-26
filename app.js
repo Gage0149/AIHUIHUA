@@ -193,9 +193,12 @@ function apply(previousView){const q=st.q.toLowerCase().trim().split(/\s+/).filt
  $('#count').innerHTML=st.tab=='depth'?(L.length==tot?`共 <b>${tot}</b> 组 · ${imgs(base())} 张`:`<b>${L.length}</b> / ${tot} 组 · ${imgs(L)} 张`):(L.length==tot?`共 <b>${tot}</b> 项`:`<b>${L.length}</b> / ${tot} 项`);$('#grid').innerHTML='';st.n=0;
  const em=!L.length;$('#empty').hidden=!em;$('#clearAll').hidden=!(Object.values(st.f).some(Boolean)||st.q);
  document.body.classList.toggle('none0',(st.tab=='fav'||st.tab=='recent')&&!tot);
- if(em){const none=(st.tab=='fav'||st.tab=='recent')&&!tot;$('#emptyT').textContent=none?(st.tab=='fav'?'还没有收藏':'还没有浏览记录'):'没有找到匹配的内容';
-  $('#emptyP').textContent=none?(st.tab=='fav'?'看到喜欢的，点卡片右上角的 ♡。收藏只存在这台设备的浏览器里，可以导出备份。':'打开过的大图会按时间排在这里，最多保留 100 条。'):'换个关键词试试，或者看看这些热门搜索：';
-  $('#sugg').innerHTML=none?'':(SUGG[st.tab]||[]).map(s=>`<button class="chip" data-s="${s}">${s}</button>`).join('');$('#reset').hidden=none;$('#empty .emo').innerHTML=none?(st.tab=='fav'?EI.fav:EI.rec):EI.q;$('#emptyGo').innerHTML=none?'<button class="sm" data-go="pose">逛姿势库</button><button class="sm" data-go="depth">逛深度姿势</button><button class="sm" data-go="costume">逛服装库</button><button class="sm" data-go="anime">逛动画服装</button><button class="sm" data-go="portrait">逛人像库</button><button class="sm" data-go="expr">逛表情库</button><button class="sm" data-go="dyn">逛历代服饰</button><button class="sm" data-go="scene">逛场景库</button>':''}
+ if(em){const none=(st.tab=='fav'||st.tab=='recent')&&!tot;
+  const emptyCustom=st.tab.startsWith('custom-')&&DATA[st.tab]?.length===0;
+  $('#emptyT').textContent=emptyCustom?'这个二级分类还没有素材':none?(st.tab=='fav'?'还没有收藏':'还没有浏览记录'):'没有找到匹配的内容';
+  $('#emptyP').textContent=emptyCustom?'二级分类已经创建成功。可以在内容管理页面为它添加图片与提示词，导出 JSON 后提交到 GitHub。':none?(st.tab=='fav'?'看到喜欢的，点卡片右上角的 ♡。收藏只存在这台设备的浏览器里，可以导出备份。':'打开过的大图会按时间排在这里，最多保留 100 条。'):'换个关键词试试，或者看看这些热门搜索：';
+  $('#sugg').innerHTML=none||emptyCustom?'':(SUGG[st.tab]||[]).map(s=>`<button class="chip" data-s="${esc(s)}">${esc(s)}</button>`).join('');$('#reset').hidden=none||emptyCustom;$('#empty .emo').innerHTML=none?(st.tab=='fav'?EI.fav:EI.rec):EI.q;
+  $('#emptyGo').innerHTML=emptyCustom?`<a class="sm pri" href="${esc(siteAssetUrl('manage.html'))}" target="_blank" rel="noopener noreferrer">去内容管理添加素材 ↗</a>`:none?'<button class="sm" data-go="pose">逛姿势库</button><button class="sm" data-go="depth">逛深度姿势</button><button class="sm" data-go="costume">逛服装库</button><button class="sm" data-go="anime">逛动画服装</button><button class="sm" data-go="portrait">逛人像库</button><button class="sm" data-go="expr">逛表情库</button><button class="sm" data-go="dyn">逛历代服饰</button><button class="sm" data-go="scene">逛场景库</button>':''}
  more(previousView?.count||30)}
 const STUDIO_SLOT = {portrait:'portrait',costume:'garment',anime:'garment',dyn:'garment',pose:'pose',depth:'pose',expr:'expr'};
 const studioSlot=type=>STUDIO_SLOT[type]||'extra';

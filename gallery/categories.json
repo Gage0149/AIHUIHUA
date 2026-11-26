@@ -51,6 +51,14 @@
         "风景摄影",
         "AI插画"
       ]
+    },
+    {
+      "id": "video-assets",
+      "name": "视频素材",
+      "group": "video",
+      "file": "/gallery/video-assets.json",
+      "count": 0,
+      "suggestions": []
     }
   ]
 }

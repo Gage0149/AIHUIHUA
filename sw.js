@@ -1,4 +1,4 @@
-const VERSION = 'aihuihua-keep-empty-custom-menus-2026-11-26';
+const VERSION = 'aihuihua-video-subcategory-2026-11-26';
 const PRECACHE = ['./','index.html','theme.js','style.css','app.js','image-providers.js','studio.js','extras.js','zip.js','history.js','i18n.js','references.js','site-shell.js','gallery/gallery.json','gallery/works.json','gallery/categories.json','favicon.svg'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(VERSION).then(cache => cache.addAll(PRECACHE)).then(() => self.skipWaiting()));
