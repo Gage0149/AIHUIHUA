@@ -1,63 +1,31 @@
-
 [
-  {
-    "id": "new-00001",
-    "title": "新中式极简艺术封面",
-    "subcategory": "艺术",
-    "image": "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU10YXdiQUlKWm5URTNGRS1PRVptSWFULTFqSnIwQUFuOE1BQUljd0RCRXJJVnJGOTlYb2VFOUJBIiwiZSI6InBuZyIsIm4iOiJwYXN0ZV8xNzk1NjA0NTA1MDA4XzEucG5nIiwibSI6ImltYWdlL3BuZyIsInMiOjI0MDk1NzMsInQiOjE3OTU2MDQ1MTI2NjYsIm1pZCI6NDV9.pzPy2NfBw-0J-M9Pm9bweF7SJQGOCQyTE6nMrSC1azI.png",
-    "prompt_zh": "主体：\n现代新中式极简艺术封面，气质明艳的成年东方女性，身材高挑苗条，腰肢纤细，曲线柔美，散发清雅性感魅力。\n\n人物・表情：\n精致圆润鹅蛋脸，乌黑长发盘成慵懒低髻，几缕碎发轻垂，肌肤白皙透亮，淡橘裸妆，眉眼含笑，神情灵动。\n\n服装・姿势：\n身穿浅鹅黄色修身抹胸连衣裙，露出精致肩颈，脚踩细带凉鞋，踮脚伸手摘取枝头青果，身姿轻盈舒展。\n\n背景・光线：\n现代东方柑橘庭院，米白色弧形墙面，翠绿枝叶与金黄果实点缀，清晨阳光倾洒，明亮清透，充满夏日生机。\n\n构图・镜头：\n竖版3:4封面，侧面低角度全身抓拍，人物位于画面左侧，右侧大面积奶白留白，35mm镜头，自然景深。\n\n质感・风格：\n超写实高端时尚摄影，细腻真实肤质，柔亮自然光，鹅黄与奶白配色，清新明媚，轻奢杂志质感。\n\n补充要求：\n高颜值新中式极简封面，右侧留白竖排精致宋体「青柠序夏」，辅以小字「风有清香，夏有回响」，排版雅致。",
-    "prompt_en": "",
-    "adult": false,
-    "tags": [
-      "人像",
-      "艺术",
-      "新中式"
-    ]
-  },
-    {
-    "id": "new-00002",
-    "title": "性感女神",
-    "subcategory": "性感",
-    "image": "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU12YXdiSHdEYUYwYjFYUFNMdnkxU2pRX2s0UHdzQUFuOEhBQUljd0RoRVp0R0g2dUhMVHBZOUJBIiwiZSI6InBuZyIsIm4iOiJwYXN0ZV8xNzk1NjA2NDU0MDk5XzEucG5nIiwibSI6ImltYWdlL3BuZyIsInMiOjI2NTI3NDcsInQiOjE3OTU2MDY0NjQ2NzQsIm1pZCI6NDd9.cJdR4wBadvLZYmWqiNZGfZ4vSTwnw07_DYDSdHrEs44.png",
-    "prompt_zh": "一个漂亮的东亚少女，胸部倚在桌上，上半身，正面，坐在桌子面前，双手放在桌子上，身穿红色丝绒短款连衣裙，腿上是长筒袜，穿高跟鞋，手套作点缀。，半身照，iPhone18pro 拍摄的照片，胶片质感，写实照片",
-    "prompt_en": "",
-    "adult": true,
-    "tags": [
-      "人像",
-      "写真",
-      "性感"
-    ],
-    "reference_images": [
-    "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU0xYXdnVDR6MnRfZm45b05WR2JEU0FianRrUGs0QUFyc0lBQUpuWlVoRVVCai1NQ3BYZFM0OUJBIiwiZSI6InBuZyIsIm4iOiJwYXN0ZV8xNzk1NjkxNDkwMTUwXzEucG5nIiwibSI6ImltYWdlL3BuZyIsInMiOjY0NzczOCwidCI6MTc5NTY5MTQ5MTU5NiwibWlkIjo1M30.gruIJgYVJpRtqgqrphRqb5q1mtoqQjKtBHVRtMrbqaI.png",
-    "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU0zYXdnVDhIc09Yc25laVVCR3lXcVF6VDFkenhRQUFyd0lBQUpuWlVoRXlsLXFTdmFydTA4OUJBIiwiZSI6InBuZyIsIm4iOiJwYXN0ZV8xNzk1NjkxNTA0MjA3XzEucG5nIiwibSI6ImltYWdlL3BuZyIsInMiOjM4NzE1MCwidCI6MTc5NTY5MTUwNDY2OCwibWlkIjo1NX0.Akzouv8JYXBBpTBG0-ofBTf_ouFJrNgaw5ncNreTr7o.png"
-    ]
-  },
-  {
-  "id": "new-00003",
-  "title": "Instagram 风格的复古人物照片",
-  "subcategory": "人像",
-  "image": "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU14YXdnTWJKWjB3bXNOU1NYbkEzLWZXRGNjYmNBQUFyVUlBQUpuWlVoRWQ3d1g0aHdNQVI0OUJBIiwiZSI6InBuZyIsIm4iOiJwYXN0ZV8xNzk1Njg5NTc1MzM0XzEucG5nIiwibSI6ImltYWdlL3BuZyIsInMiOjI1OTI3MDAsInQiOjE3OTU2ODk1ODEyNzIsIm1pZCI6NDl9.mhMyTZJe2Ep530ACKY81NjbasefcVM-rxdeO9regT4s.png",
-  "prompt_zh": "基于日本 Instagram 风格的复古人物照片。整体采用低饱和度的冷色调，应用低分辨率和强烈的数字颗粒效果，营造出仿佛用老旧智能手机拍摄的粗糙而自然的照片质感。\n\n20 岁出头的日俄混血女性 coser。自然垂至肩下的雪白长直发，明亮而干净的肌肤，精致而富有魅力的脸部轮廓。她穿着贴合身体的红色高领短袖修身内搭 T 恤，修长而匀称的身材格外突出。\n\n在冷峻而高傲的氛围中，带着一丝奇妙的可爱魅力。略带朦胧却又吸引人的眼神，微微下垂的眼睑，微微张开的嘴唇。凝视镜头的目光中流露出从容而自信的气息。\n\n修长纤细的手指以自然姿态展现，手部的细腻形态和柔和动作为照片增添魅力。不夸张的自然姿势，以及看似未经修饰的表情。\n\n脸部应用轻微过曝效果，使肌肤呈现柔软而白皙的质感，尤其是眼周添加了柔和而梦幻的模糊效果。整体融合低对比度、冷色温、低饱和度、粗糙的数字噪点、细微的焦点模糊以及自然的眩光效果。\n\n日本风格的低画质智能手机自拍风格，复古数码相机特有的不完美质感，自然的肌肤表现，冷峻而神秘却又可爱的氛围。没有过度的肌肤修饰或人为的锐度，仿佛真实日常中拍摄的写实抓拍照片。没有文字，没有水印",
+{
+  "id": "new-1795759202026",
+  "title": "黑丝ρʕ•̫͡•ʔϠ",
+  "subcategory": "性感",
+  "image": "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU1fYXdrY2N0QWtXWS1HQmUwXzNKbGdkU2ZFRjVvQUFvNEtBQUpuWlZCRS1JR1phNWxXMHpZOUJBIiwiZSI6ImpwZyIsIm4iOiJIWC12Qi1sYVVBQXJfSzEuanBnIiwibSI6ImltYWdlL2pwZWciLCJzIjo0MDEyNzgsInQiOjE3OTU3NTkyMTkwNTEsIm1pZCI6NjN9.HYkv9o2Ph5FdCafw1upzxc4UsUDycwDhPODz2uXMxYg.jpg",
+  "prompt_zh": "▼人物\n二十岁出头的东亚年轻女性，躺在白色床上，直视镜头，表情慵懒带一点魅惑。棕色短发，及肩下，齐刘海，发梢带柔和波浪，垂落在脸侧。清秀柔和的鹅蛋脸，亮棕色大眼睛，自然的双重眼睑。晶莹剔透的白皙肌肤，粉唇，带有素颜感的自然妆容。\n\n▼体型・胸部\n自然苗条，D+ 罩杯，胸部大而丰满，自然协调，胸型圆润饱满，胸沟深邃清晰，胸部上缘饱满，侧面弧线明显，具有真实的重量感、柔软度和自然下垂感，锁骨明显，肩膀精致，腹部平坦，腰线清晰。\n\n▼服装\n黑色女仆连衣裙，白色蕾丝花边，低领，短袖泡泡袖，白色纽扣；黑色内裤，低腰；黑色半透明长筒袜，袜口松紧。\n\n▼下半身\n黑色内裤完全露出胯部和大腿根部，大腿修长白皙，大腿内侧线条清晰，双腿分开躺在床上，膝盖弯曲，脚掌朝向镜头，脚趾自然放松。躺在白色床单上，旁边是白色枕头和床头柜。\n\n▼场景・姿势\n温馨卧室，白色床单，白色枕头，床头柜上有台灯和瓶子，暖色灯光。身体躺在床上，双腿分开，一只手放在裙摆上，头微微倾斜。\n\n▼机位・构图\n低角度仰拍，全身，人物占满画面，双脚在画面前景，床和卧室做背景。\n\n▼光线・质感\n暖色室内光从左侧照进来，皮肤柔和高光，真实生活快照感，细节丰富，电影感。",
   "prompt_en": "",
-  "adult": false,
+  "adult": true,
   "tags": [
     "人像",
-    "写真",
-    "复古"
-  ]
+    "性感。写真"
+  ],
+  "description": "grok"
 },
 {
-  "id": "new-00004",
-  "title": "日常手机抓拍人像。",
-  "subcategory": "人像",
-  "image": "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU16YXdnTjNETTNndkZkMFFtZklRVEZXb1FXWDNNQUFyY0lBQUpuWlVoRUVXa0d2OUZwcDhBOUJBIiwiZSI6InBuZyIsIm4iOiJwYXN0ZV8xNzk1Njg5OTQ0MDE1XzEucG5nIiwibSI6ImltYWdlL3BuZyIsInMiOjI5MDM0MDIsInQiOjE3OTU2ODk5NDkyMTIsIm1pZCI6NTF9.4XucmEjaSKgFzLxVwKK-B5mmDF3UWBv-GaJ_cUxNZ14.png",
-  "prompt_zh": "在平凡无奇的室内空间中站立的年轻女性，用智能手机自然拍摄的抓拍照片。小巧的半身像和手掌般大小的脸庞，冷峻感的明亮白皙肌肤，非常纤细狭长的脸型，清晰的脸颊轮廓。自然垂落到肩部的长直发，无表情却带着微妙可爱的氛围。穿着细节精致的单色修身衬衫。\n\n构图故意显得有些笨拙，略微倾斜，焦点微妙地偏移，带来些许模糊感。低分辨率和清晰度，显眼智能手机特有的数字噪点和粗糙颗粒感。不均匀的室内照明，让脸部一侧明亮，另一侧则较暗。未经修饰的现实日常抓拍照片氛围。纵向构图的近距离拍摄。",
+  "id": "new-1795760847642",
+  "title": "漫画风角色拼贴画",
+    "subcategory": "二次元",
+  "image": "https://k-vault-eaj.pages.dev/file/tgs_eyJ2IjoxLCJmIjoiQlFBQ0FnRUFBeUVHQUFUbmpFVXJBQU5CYXdrakE1ZTNkdnJxVTZKcEhMeFFtc2FGWUZJQUFwUUtBQUpuWlZCRWxGbmtqWldfclBVOUJBIiwiZSI6ImpwZyIsIm4iOiJIWUVrR3llYVVBQXVWWFcuanBnIiwibSI6ImltYWdlL2pwZWciLCJzIjo1NTc3NTgsInQiOjE3OTU3NjA5MDAwNTEsIm1pZCI6NjV9.FmNAQ7Yx6iXgZse0GL-41IKDJ_ouNW5uAR9TEZtpPZs.jpg",
+  "prompt_zh": "“风格”：日本动漫漫画风格，线条简洁明了，带有柔和的渲染效果。“宽高比”：3:4。“构图”：垂直分层的角色拼贴画，包含四个女性角色。中央有一个较大的特写肖像，周围还有三个较小的肖像，这些肖像自然地相互重叠。“角色描述”：  \n“女孩 1”：短发黑色发型，圆框眼镜，黑色服装，表情平静。  \n“女孩 2”：头发乱糟糟地扎着，穿着蓝色高领毛衣，侧身站立。  \n“女孩 3”：长发卷曲，棕色头发，穿着奶油色毛衣，表情沉思。  \n“女孩 4”：长直发，颜色为深色，穿着红色连帽衫，表情温柔。  \n“角色设计”：每个角色都有独特的面部特征、发型、发长、姿势、表情和服装。没有重复的角色形象。  \n“色彩”：全彩插图，各角色的服装颜色鲜艳但平衡搭配，皮肤色调自然，头发细节丰富，背景颜色以淡色调为主。\",  \"background\": \"简洁的白色背景，上面有柔和颜色的几何图案。\",  \"quality\": \"高质量的动画插图，眼睛细节丰富，面部表情生动，头发渲染精美。\",  \"negative_prompt\": \"没有文字，没有水印，没有标志，不是灰度效果，不是单色效果，没有重复字符，没有相同的面部表情。\"}",
   "prompt_en": "",
   "adult": false,
   "tags": [
-    "人像",
-    "写真",
-    "抓拍"
+    "角色",
+    "漫画风格",
+    "拼贴"
   ]
 }
+
 ]
