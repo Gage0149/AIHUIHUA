@@ -159,7 +159,7 @@
     const view=collectionKind(sourcePath),select=$('#itemCategorySelect');
     if(!view)return;
     select.replaceChildren();
-    const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='请选择已配置的二级分类';select.append(placeholder);
+    const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='不设置二级分类（仅在「全部」中显示）';select.append(placeholder);
     const names=new Set();
     for(const row of filterRows(view)){
       const name=String(row.name||'').trim();
@@ -174,7 +174,9 @@
     select.value=value||'';
     $('#itemCategoryHelp').textContent=value&&!names.has(value)
       ? '⚠ 这个分类尚未在「分类配置」中登记。图片仍可在「全部」中显示，但不会自动生成筛选按钮。'
-      : '这里只能选择已配置的分类。新增菜单请使用「01 分类配置」；图片 tags 不会创建任何菜单。';
+      : !value
+        ? '二级分类为选填。不设置时图片仍会在「全部」中显示，不会归入任何二级分类；如需筛选按钮，请先在「01 分类配置」登记分类。'
+        : '已选择一个配置好的二级分类。图片 tags 只用于说明和搜索，不会创建菜单。';
   }
   function selectCollectionFilter(name='') {
     selectedCollectionFilter = name;
@@ -476,8 +478,14 @@
     if(keys.titleKey)draft[keys.titleKey]=$('#itemTitle').value.trim();
     const collection=!!collectionKind(sourcePath);
     const category=collection?$('#itemCategorySelect').value.trim():$('#itemCategory').value.trim();
-    if(collection&&!category)return toast('请先选择二级分类。如需新分类，请先到「01 分类配置」创建。');
-    draft[keys.categoryKey]=category;
+    if(collection){
+      if(category)draft[keys.categoryKey]=category;
+      else {
+        delete draft.subcategory;
+        delete draft.category;
+        delete draft.cat;
+      }
+    }else draft[keys.categoryKey]=category;
     draft[keys.zhKey]=$('#itemZh').value.trim();draft[keys.enKey]=$('#itemEn').value.trim();
     if('description'in draft||$('#itemDescription').value.trim())draft.description=$('#itemDescription').value.trim();
     if('tags'in draft||$('#itemTags').value.trim())draft.tags=$('#itemTags').value.split(/[,，]/).map(s=>s.trim()).filter(Boolean);
