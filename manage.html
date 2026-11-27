@@ -101,10 +101,10 @@
               <label>素材 ID<input id="itemId" required></label>
               <label id="titleLabel">图片标题<input id="itemTitle" placeholder="图片名称"></label>
               <label id="itemCategoryTextWrap">二级分类<input id="itemCategory" placeholder="如：人物写真"></label>
-              <label id="itemCategorySelectWrap" hidden>二级分类（选择已创建的菜单）<select id="itemCategorySelect"></select></label>
+              <label id="itemCategorySelectWrap" hidden>二级分类（可选）<select id="itemCategorySelect"></select></label>
               <label class="checkbox-line"><input id="itemAdult" type="checkbox"> R18 成人向（关闭开关时隐藏）</label>
             </div>
-            <p id="itemCategoryHelp" class="field-hint">二级分类决定筛选归属；如需新菜单，请先在「分类配置」中创建。</p>
+            <p id="itemCategoryHelp" class="field-hint">二级分类为选填；不设置时图片仍会在「全部」中显示，不会归入某个二级分类。</p>
             <label id="videoUrlField" hidden>视频文件直链（MP4 / WebM）<input id="itemVideoUrl" type="url" placeholder="https://example.com/video.mp4"></label>
             <div id="itemCategoryActions" class="row-actions" hidden><button type="button" id="goCategoryConfig" class="subtle">＋ 新增或管理二级分类</button></div>
             <label>中文提示词<textarea id="itemZh" rows="3"></textarea></label>
@@ -163,6 +163,6 @@
   </main>
   <div id="toast" role="status" aria-live="polite"></div>
   <script src="zip.js" defer></script>
-  <script src="manage.js?v=5" defer></script>
+  <script src="manage.js?v=6" defer></script>
 </body>
 </html>
